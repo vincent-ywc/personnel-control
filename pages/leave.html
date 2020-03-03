@@ -40,14 +40,13 @@
 	</head>
 	<body>
 		<div class="header">
-			<div class="title">进出园区登记表--公司员工</div>
+			<div class="title">出园登记</div>
 		</div>
 		<div class="content">
 			<div class="weui-cells weui-cells_form">
 			  <div class="weui-cell">
-			    <div class="weui-cell__hd"><label class="weui-label">工号</label></div>
 			    <div class="weui-cell__bd">
-				  <input id="cardIdVal" class="weui-input" type="text" placeholder="请输入工号" required>
+				  <input id="cardIdVal" class="weui-input" type="text" placeholder="请输入工号/手机号" required>
 			    </div>
 				<div class="weui-cell__ft">
 				  <button class="weui-vcode-btn" id="get-msg-btn">获取信息</button>
@@ -55,14 +54,6 @@
 			  </div>
 			</div>
 			<div class="msg-box">
-				<div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">系统审核结果</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label><i class="weui-icon-success weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #07c160;vertical-align: middle;">系统核准通过，请测温后填写提问数据并提交，感谢配合</span></label>
-				    </div>
-				  </div>
 				<div class="form-box">
 					<div class="weui-cell">
 					    <div class="weui-cell__hd">
@@ -70,14 +61,6 @@
 					    </div>
 					    <div class="weui-cell__bd">
 					      <label id="cardIdMsg"></label>
-					    </div>
-					  </div>
-					<div class="weui-cell">
-					    <div class="weui-cell__hd">
-					      <label class="weui-label">申报日期</label>
-					    </div>
-					    <div class="weui-cell__bd">
-					      <label>2020-03-03</label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -106,66 +89,12 @@
 					  </div>
 					  <div class="weui-cell">
 					    <div class="weui-cell__hd">
-					      <label class="weui-label">申请理由</label>
+					      <label class="weui-label">入园时间</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>测试</label>
+					      <label>2020-03-03 18:16:00</label>
 					    </div>
 					  </div>
-					  <div class="weui-cell">
-					    <div class="weui-cell__hd">
-					      <label class="weui-label">现场办公理由</label>
-					    </div>
-					    <div class="weui-cell__bd">
-					      <label>测试</label>
-					    </div>
-					  </div>
-					 <div class="weui-cell">
-					   <div class="weui-cell__hd">
-					     <label class="weui-label">工作地点</label>
-					   </div>
-					   <div class="weui-cell__bd">
-					     <label>深圳南山</label>
-					   </div>
-					 </div>
-					 <div class="weui-cell">
-					   <div class="weui-cell__hd">
-					     <label class="weui-label">A类工作地点</label>
-					   </div>
-					   <div class="weui-cell__bd">
-					     <label>深圳南山</label>
-					   </div>
-					 </div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">是否区域责任人</label>
-					  </div>
-					  <div class="weui-cell__bd">
-					    <label>否</label>
-					  </div>
-					</div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">责任区域</label>
-					  </div>
-					  <div class="weui-cell__bd">
-					    <label>测试</label>
-					  </div>
-					</div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">责任区域编号</label>
-					  </div>
-					  <div class="weui-cell__bd">
-					    <label>测试</label>
-					  </div>
-					</div>
-					<div class="weui-cell">
-						<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
-						<div class="weui-cell__bd">
-							<input id="animal-heat" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
-						</div>
-					</div>
 					<div class="weui-cell">
 						<div class="weui-cell__hd"><label class="weui-label">备注</label></div>
 						<div class="weui-cell__bd">
@@ -173,7 +102,7 @@
 						</div>
 					</div>
 					<div class="weui-btn-area">
-					      <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-but">提交</a>
+					      <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-but">出园</a>
 					</div>
 				</div>
 			</div>
@@ -185,20 +114,16 @@
 			$(function () {
 				$('#get-msg-btn').tap(function () {
 					if (!$('#cardIdVal').val()) {
-						$.toptip('请输入工号', 'error');
+						$.toptip('请输入工号/手机号', 'error');
 					} else {
 						$('.msg-box, .form-box').show()
 						$('#cardIdMsg').html($('#cardIdVal').val())
 					}
 				})
 				$('#submit-but').tap(function () {
-					if (!$('#animal-heat').val()) {
-						$.toptip('请输入体温', 'error');
-					} else {
-						$.toast("提交成功", 1000, function() {
-						  location.href = 'entrance-result.html'
-						});
-					}
+					$.toast("提交成功", 1000, function() {
+					  location.href = 'leave-result.html'
+					});
 				})
 			})
 		</script>
