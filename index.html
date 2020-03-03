@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>出入园登记</title>
+		<style>
+			html {
+				height: 100%;
+			}
+			body {
+				margin: 0px;
+				padding: 0px;
+				height: 100%;
+				background:linear-gradient(to bottom,#CBFAF3, #F0F8E3);
+				overflow: hidden;
+				border: 1px solid rgba(0,0,0,0);
+			}
+			button {
+				border: none;
+				margin: 0;
+				padding: 0;
+				outline-style: none;
+				width: 130px;
+				height: 130px;
+				border-radius: 50%;
+				display: block;
+				font-size: 22px;
+				color: #fff;
+			}
+			.employee {
+				margin: 40% auto 50px;
+				background-color: #35B0CF;
+			}
+			.visitor {
+				margin: 0 auto;
+				background-color: #33cabb;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="type-box">
+			<button type="button" class="employee">我是员工</button>
+			<button type="button" class="visitor">我是访客</button>
+		</div>
+		<script src="js/zepto.min.js"></script>
+		<script src="js/zepto.touch.js"></script>
+		<script>
+			$(function(){
+				// 页面跳转
+				$('.employee').on('tap', function () {
+					location.href = 'pages/employee.html'
+				})
+				$('.visitor').on('tap', function () {
+					location.href = 'pages/visitor.html'
+				})
+			})
+		</script>
+	</body>
+</html>
