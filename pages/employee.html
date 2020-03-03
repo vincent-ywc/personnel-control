@@ -30,7 +30,7 @@
 				margin-left: 5px;
 				font-weight: bold;
 			}
-			.msg-box {
+			.msg-box, .form-box {
 				display: none;
 			}
 			.weui-cell__ft {
@@ -47,7 +47,6 @@
 			  <div class="weui-cell">
 			    <div class="weui-cell__hd"><label class="weui-label">工号</label></div>
 			    <div class="weui-cell__bd">
-			      <!-- <label>A04115</label> -->
 				  <input id="cardIdVal" class="weui-input" type="text" placeholder="请输入工号" required>
 			    </div>
 				<div class="weui-cell__ft">
@@ -58,114 +57,124 @@
 			<div class="msg-box">
 				<div class="weui-cell">
 				    <div class="weui-cell__hd">
-				      <label class="weui-label">工号</label>
+				      <label class="weui-label">系统审核结果</label>
 				    </div>
 				    <div class="weui-cell__bd">
-				      <label id="cardIdMsg"></label>
+				      <label><i class="weui-icon-success weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #07c160;vertical-align: middle;">系统核准通过，请测温后填写提问数据并提交，感谢配合</span></label>
 				    </div>
 				  </div>
-				<div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">申报日期</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label>2020-03-03</label>
-				    </div>
-				  </div>
-				  <div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">姓名</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label>杨文成</label>
-				    </div>
-				  </div>
-				  <div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">部门</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label>质量管理中心</label>
-				    </div>
-				  </div>
-				  <div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">班组</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label>信息化</label>
-				    </div>
-				  </div>
-				  <div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">申请理由</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label>测试</label>
-				    </div>
-				  </div>
-				  <div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">现场办公理由</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label>测试</label>
-				    </div>
-				  </div>
-				 <div class="weui-cell">
-				   <div class="weui-cell__hd">
-				     <label class="weui-label">工作地点</label>
-				   </div>
-				   <div class="weui-cell__bd">
-				     <label>深圳南山</label>
-				   </div>
-				 </div>
-				 <div class="weui-cell">
-				   <div class="weui-cell__hd">
-				     <label class="weui-label">A类工作地点</label>
-				   </div>
-				   <div class="weui-cell__bd">
-				     <label>深圳南山</label>
-				   </div>
-				 </div>
-				<div class="weui-cell">
-				  <div class="weui-cell__hd">
-				    <label class="weui-label">是否区域责任人</label>
-				  </div>
-				  <div class="weui-cell__bd">
-				    <label>否</label>
-				  </div>
-				</div>
-				<div class="weui-cell">
-				  <div class="weui-cell__hd">
-				    <label class="weui-label">责任区域</label>
-				  </div>
-				  <div class="weui-cell__bd">
-				    <label>测试</label>
-				  </div>
-				</div>
-				<div class="weui-cell">
-				  <div class="weui-cell__hd">
-				    <label class="weui-label">责任区域编号</label>
-				  </div>
-				  <div class="weui-cell__bd">
-				    <label>测试</label>
-				  </div>
-				</div>
-				<div class="weui-cell">
-					<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
-					<div class="weui-cell__bd">
-						<input id="animal-heat" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
+				<div class="form-box">
+					<div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">工号</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label id="cardIdMsg"></label>
+					    </div>
+					  </div>
+					<div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">申报日期</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label>2020-03-03</label>
+					    </div>
+					  </div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">姓名</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label>杨文成</label>
+					    </div>
+					  </div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">部门</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label>质量管理中心</label>
+					    </div>
+					  </div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">班组</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label>信息化</label>
+					    </div>
+					  </div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">申请理由</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label>测试</label>
+					    </div>
+					  </div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">现场办公理由</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label>测试</label>
+					    </div>
+					  </div>
+					 <div class="weui-cell">
+					   <div class="weui-cell__hd">
+					     <label class="weui-label">工作地点</label>
+					   </div>
+					   <div class="weui-cell__bd">
+					     <label>深圳南山</label>
+					   </div>
+					 </div>
+					 <div class="weui-cell">
+					   <div class="weui-cell__hd">
+					     <label class="weui-label">A类工作地点</label>
+					   </div>
+					   <div class="weui-cell__bd">
+					     <label>深圳南山</label>
+					   </div>
+					 </div>
+					<div class="weui-cell">
+					  <div class="weui-cell__hd">
+					    <label class="weui-label">是否区域责任人</label>
+					  </div>
+					  <div class="weui-cell__bd">
+					    <label>否</label>
+					  </div>
 					</div>
-				</div>
-				<div class="weui-cell">
-					<div class="weui-cell__hd"><label class="weui-label">备注</label></div>
-					<div class="weui-cell__bd">
-						<textarea class="weui-textarea" placeholder="请输入备注信息" rows="3"></textarea>
+					<div class="weui-cell">
+					  <div class="weui-cell__hd">
+					    <label class="weui-label">责任区域</label>
+					  </div>
+					  <div class="weui-cell__bd">
+					    <label>测试</label>
+					  </div>
 					</div>
-				</div>
-				<div class="weui-btn-area">
-				      <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-but">提交</a>
+					<div class="weui-cell">
+					  <div class="weui-cell__hd">
+					    <label class="weui-label">责任区域编号</label>
+					  </div>
+					  <div class="weui-cell__bd">
+					    <label>测试</label>
+					  </div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
+						<div class="weui-cell__bd">
+							<input id="animal-heat" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label class="weui-label">备注</label></div>
+						<div class="weui-cell__bd">
+							<textarea class="weui-textarea" placeholder="请输入备注信息" rows="3"></textarea>
+						</div>
+					</div>
+					<div class="weui-btn-area">
+					      <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-but">提交</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -178,7 +187,7 @@
 					if (!$('#cardIdVal').val()) {
 						$.toptip('请输入工号', 'error');
 					} else {
-						$('.msg-box').show()
+						$('.msg-box, .form-box').show()
 						$('#cardIdMsg').html($('#cardIdVal').val())
 					}
 				})
