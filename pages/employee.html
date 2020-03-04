@@ -202,6 +202,7 @@
 					if (!$('#cardIdVal').val()) {
 						$.toptip('请输入工号', 'error');
 					} else {
+						$('#animal-heat').val('')
 						// 获取信息
 						getPersonnelMsg()
 					}
@@ -210,6 +211,7 @@
 					if (!$('#animal-heat').val()) {
 						$.toptip('请输入体温', 'error');
 					} else {
+						// 保存信息
 						SaveEmpEnterInfo()
 					}
 				})
@@ -252,7 +254,7 @@
 						}
 					  },
 					  error: (xhr, status) => {
-				
+						$.toast("获取数据失败，请稍后重试")
 					  },
 					  complete: () => {
 					    $('#loading').hide()
@@ -282,7 +284,7 @@
 						}
 					  },
 					  error: (xhr, status) => {
-					
+						$.toast("提交失败，请稍后重试")
 					  },
 					})
 				}

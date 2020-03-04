@@ -67,6 +67,9 @@
 			#employee-box, #visitor-box {
 				display: none;
 			}
+			.demos-header {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -195,16 +198,105 @@
 			<i class="weui-loading"></i>
 		</div>
 		<script src="../js/zepto.min.js"></script>
+		<script src="../js/jquery-weui.min.js"></script>
+		<script src="../js/zepto.touch.js"></script>
 		<script>
+			/*var dateFormat = function() {
+			    var token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloS]|"[^"]*"|'[^']*'/g,
+			        pad = function(val, len) {
+			            val = String(val);
+			            len = len || 2;
+			            while (val.length < len) {
+			                val = "0" + val;
+			            }
+			            return val;
+			        },
+			        masks = {
+			            "default": 'yyyy-mm-dd HH:MM:ss',
+			            "shortDate": 'm/d/yy',
+			            "shortTime": 'h:MM TT',
+			            "mediumTime": 'h:MM:ss TT',
+			            "longTime": 'h:MM:ss TT Z',
+			            "isoDate": 'yyyy-mm-dd',
+			            "isoTime": 'HH:MM:ss',
+			            "isoDateTime": 'yyyy-mm-dd\'T\'HH:MM:ss',
+			            "isoUtcDateTime": 'UTC:yyyy-mm-dd\'T\'HH:MM:ss\'Z\''
+			        };
+			
+			    return function(date, mask, utc) {
+			
+			        if (!(date instanceof Date)) {
+			            date = new Date(date);
+			        }
+			
+			        if (isNaN(date)) {
+			            throw new SyntaxError("invalid date");
+			        }
+			
+			        mask = masks[mask] || mask || masks["default"];
+			
+			        var _ = utc ? "getUTC" : "get",
+			            d = date[_ + "Date"](),
+			            D = date[_ + "Day"](),
+			            m = date[_ + "Month"](),
+			            y = date[_ + "FullYear"](),
+			            H = date[_ + "Hours"](),
+			            M = date[_ + "Minutes"](),
+			            s = date[_ + "Seconds"](),
+			            L = date[_ + "Milliseconds"](),
+			            o = utc ? 0 : date.getTimezoneOffset(),
+			            flags = {
+			                d: d,
+			                dd: pad(d),
+			                m: m + 1,
+			                mm: pad(m + 1),
+			                yy: String(y).slice(2),
+			                yyyy: y,
+			                h: H % 12 || 12,
+			                hh: pad(H % 12 || 12),
+			                H: H,
+			                HH: pad(H),
+			                M: M,
+			                MM: pad(M),
+			                s: s,
+			                ss: pad(s),
+			                l: pad(L, 3),
+			                L: pad(L > 99 ? Math.round(L / 10) : L),
+			                t: H < 12 ? "a" : "p",
+			                tt: H < 12 ? "am" : "pm",
+			                T: H < 12 ? "A" : "P",
+			                TT: H < 12 ? "AM" : "PM",
+			                o: (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
+			                S: ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
+			            };
+			
+			        return mask.replace(token, function($0) {
+			            return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
+			        });
+			    };
+			}();
+			$('.EmployeeId').html(getQueryString('empID'))
+			$('.EmployeeName').html(decodeURIComponent(getQueryString('EmployeeName')))
+			$('.DeptName').html(decodeURIComponent(getQueryString('DeptName')))
+			$('.GroupName').html(decodeURIComponent(getQueryString('GroupName'))) 
+			$('.ArriveOfficeDate').html(getQueryString('ArriveOfficeDate').replace(/T/g, ' '))
+			$('.LeaveOfficeDate').html(dateFormat(+new Date(), 'yyyy-mm-dd HH:MM:ss'))
+			$('.Temperature').html(getQueryString('Temperature') + '℃')
+			$('.VisitingUnit').html(getQueryString('VisitingUnit'))
+			if (getQueryString('type') == 1) {
+				$('#employee-box').show()
+			} else {
+				$('#visitor-box').show()
+			}*/
 			
 			getPersonnelMsg()
 			
 			function getPersonnelMsg() {
 				$.ajax({
-				  url: 'http://106.3.225.253:8087/api/EntrancePermit/QueryUserEnterData',
+				  url: 'http://106.3.225.253:8087/api/EntrancePermit/QueryUserEnterHistoryData',
 				  data: {
 					 empID: getQueryString('empID'),
-					 type: getQueryString('type')
+					 type: getQueryString('type') 
 				  },
 				  type: 'GET',
 				  dataType: 'json',
@@ -214,8 +306,8 @@
 				  success: (response) => {
 				    var result = response.result
 					if (result == 1) {
+						$('.demos-header').show()
 						var info = JSON.parse(response.info)[0]
-						console.log(info)
 						$('.EmployeeId').html(info.EmployeeId)
 						$('.EmployeeName').html(info.EmployeeName)
 						$('.DeptName').html(info.DeptName)
@@ -234,7 +326,7 @@
 					}
 				  },
 				  error: (xhr, status) => {
-			
+					$.toast("获取数据失败，请稍后重试")
 				  },
 				  complete: () => {
 				    $('#loading').hide()
@@ -243,11 +335,9 @@
 			}
 			
 			function getQueryString(name) {    
-				var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');    
-				var r = window.location.search.substr(1).match(reg);    
-				if (r != null) {        
-					return unescape(r[2]);
-				}    
+				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+				var r = window.location.search.substr(1).match(reg); 
+				if (r != null) return decodeURI(r[2]); 
 				return null;
 			}
 		</script>

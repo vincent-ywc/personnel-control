@@ -359,6 +359,7 @@
 					if (!$('#phVal').val()) {
 						$.toptip('请输入手机号', 'error');
 					} else {
+						$('#animal-heat').val('')
 						// 获取信息
 						getPersonnelMsg()
 					}
@@ -421,7 +422,7 @@
 						}
 					  },
 					  error: (xhr, status) => {
-
+						$.toast("获取数据失败，请稍后重试")
 					  },
 					  complete: () => {
 					    $('#loading').hide()
@@ -466,7 +467,7 @@
 						}
 					  },
 					  error: (xhr, status) => {
-					
+						$.toast("提交失败，请稍后重试")
 					  },
 					})
 				}

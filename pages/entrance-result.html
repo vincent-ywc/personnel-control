@@ -67,6 +67,9 @@
 			#employee-box, #visitor-box {
 				display: none;
 			}
+			.demos-header {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -180,6 +183,8 @@
 			<i class="weui-loading"></i>
 		</div>
 		<script src="../js/zepto.min.js"></script>
+		<script src="../js/jquery-weui.min.js"></script>
+		<script src="../js/zepto.touch.js"></script>
 		<script>
 			
 			getPersonnelMsg()
@@ -199,6 +204,7 @@
 				  success: (response) => {
 				    var result = response.result
 					if (result == 1) {
+						$('.demos-header').show()
 						var info = JSON.parse(response.info)[0]
 						$('.EmployeeId').html(info.EmployeeId)
 						$('.EmployeeName').html(info.EmployeeName)
@@ -217,7 +223,7 @@
 					}
 				  },
 				  error: (xhr, status) => {
-			
+					$.toast("获取数据失败，请稍后重试")
 				  },
 				  complete: () => {
 				    $('#loading').hide()
