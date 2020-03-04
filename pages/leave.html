@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>出入园登记</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>健康出入园登记系统</title>
 		<link rel="stylesheet" href="../css/weui.min.css">
 		<link rel="stylesheet" href="../css/jquery-weui.min.css">
 		<style>
@@ -52,6 +52,11 @@
 			}
 			.weui-select {
 				width: 70% !important;
+			}
+			.req {
+				color: red;
+				margin-left: 5px;
+				font-weight: bold;
 			}
 		</style>
 	</head>
@@ -101,6 +106,14 @@
 							</div>
 						</div>
 						<div class="weui-cell">
+							  <div class="weui-cell__hd">
+								<label class="weui-label">测量体温<span class="req">* </span> </label>
+							  </div>
+							<div class="weui-cell__bd">
+								<input id="animal-heat-employee" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
+							</div>
+						</div>
+						<div class="weui-cell">
 							<div class="weui-cell__hd">
 							  <label class="weui-label">部门</label>
 							</div>
@@ -114,14 +127,6 @@
 							</div>
 							<div class="weui-cell__bd">
 							  <label class="GroupName"></label>
-							</div>
-						</div>
-						<div class="weui-cell">
-							<div class="weui-cell__hd">
-							  <label class="weui-label">测量体温</label>
-							</div>
-							<div class="weui-cell__bd">
-							  <label class="Temperature"></label>
 							</div>
 						</div>
 						<div class="weui-cell">
@@ -140,6 +145,14 @@
 							</div>
 							<div class="weui-cell__bd">
 							  <label class="EmployeeName"></label>
+							</div>
+						</div>
+						<div class="weui-cell">
+							  <div class="weui-cell__hd">
+								<label class="weui-label">测量体温<span class="req">* </span> </label>
+							  </div>
+							<div class="weui-cell__bd">
+								<input id="animal-heat-visitor" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
 							</div>
 						</div>
 						<div class="weui-cell">
@@ -164,14 +177,6 @@
 							</div>
 							<div class="weui-cell__bd">
 							  <label class="DeptName"></label>
-							</div>
-						</div>
-						<div class="weui-cell">
-							<div class="weui-cell__hd">
-							  <label class="weui-label">测量体温</label>
-							</div>
-							<div class="weui-cell__bd">
-							  <label class="Temperature"></label>
 							</div>
 						</div>
 						<div class="weui-cell">
@@ -203,21 +208,21 @@
 				var IDFlag = ''
 				var typeFlag = ''
 				var EmployeeId = ''
-				var EmployeeName = ''
-				var DeptName = ''
-				var ArriveOfficeDate = ''
-				var Temperature = ''
-				var VisitingUnit = ''
-				var GroupName = ''
 				$('#get-msg-btn').tap(function () {
 					if (!$('#cardIdVal').val()) {
 						$.toptip('请输入工号/手机号', 'error');
 					} else {
+						$('#animal-heat-employee').val('')
+						$('#animal-heat-visitor').val()
 						getPersonnelMsg()
 					}
 				})
 				$('#submit-but').tap(function () {
-					UpdateUserOutData()
+					if (!$('#animal-heat-employee').val() && !$('#animal-heat-visitor').val()) {
+						$.toptip('请填写测量体温', 'error');
+					} else {
+						UpdateUserOutData()
+					}
 				})
 				
 				$('#selectType').change(function () {
@@ -251,11 +256,6 @@
 							var info = JSON.parse(response.info)[0]
 							IDFlag = info.ID
 							EmployeeId = info.EmployeeId
-							EmployeeName = info.EmployeeName
-							DeptName = info.DeptName
-							ArriveOfficeDate = info.ArriveOfficeDate
-							GroupName = info.GroupName
-							Temperature = info.Temperature
 							$('.EmployeeId').html(info.EmployeeId)
 							$('.EmployeeName').html(info.EmployeeName)
 							$('.DeptName').html(info.DeptName)
@@ -293,7 +293,8 @@
 					  url: 'http://106.3.225.253:8087/api/EntrancePermit/UpdateUserOutData',
 					  data: {
 						 ID: IDFlag,
-						 type: typeFlag
+						 type: typeFlag,
+						 temp: $('#animal-heat-employee').val() || $('#animal-heat-visitor').val()
 					  },
 					  type: 'GET',
 					  dataType: 'json',
@@ -301,7 +302,7 @@
 					    var result = response.result
 						if (result == '1') {
 							$.toast("提交成功", 1000, function() {
-							  location.href = 'leave-result.html?empID=' + EmployeeId + '&type=' + typeFlag + '&EmployeeName=' + encodeURIComponent(EmployeeName) + '&DeptName=' + encodeURIComponent(DeptName) + '&ArriveOfficeDate=' + ArriveOfficeDate + '&Temperature=' + Temperature + '&VisitingUnit=' + VisitingUnit + '&GroupName=' + encodeURIComponent(GroupName)
+							  location.href = 'leave-result.html?empID=' + EmployeeId + '&type=' + typeFlag
 							});
 						} else {
 							$.toast("提交失败，请稍后重试")

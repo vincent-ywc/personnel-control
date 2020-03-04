@@ -5,7 +5,7 @@
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
-		<title>出入园登记</title>
+		<title>健康出入园登记系统</title>
 		<link rel="stylesheet" href="../css/weui.min.css">
 		<link rel="stylesheet" href="../css/jquery-weui.min.css">
 		<style>
@@ -67,7 +67,7 @@
 			#employee-box, #visitor-box {
 				display: none;
 			}
-			.demos-header {
+			.demos-header, .tips {
 				display: none;
 			}
 		</style>
@@ -204,7 +204,7 @@
 				  success: (response) => {
 				    var result = response.result
 					if (result == 1) {
-						$('.demos-header').show()
+						$('.demos-header, .tips').show()
 						var info = JSON.parse(response.info)[0]
 						$('.EmployeeId').html(info.EmployeeId)
 						$('.EmployeeName').html(info.EmployeeName)

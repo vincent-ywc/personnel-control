@@ -2,10 +2,10 @@
 <html>
 	<head>
 		<meta charset="utf-8">
-		<title>出入园登记</title>
 		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>健康出入园登记系统</title>
 		<link rel="stylesheet" href="../css/weui.min.css">
 		<link rel="stylesheet" href="../css/jquery-weui.min.css">
 		<style>
@@ -83,6 +83,12 @@
 					    <div class="weui-cell__bd">
 					      <label><i class="weui-icon-success weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #07c160;vertical-align: middle;">系统核准通过，请测温后填写体温数据并提交，感谢配合</span></label>
 					    </div>
+					  </div>
+					  <div class="weui-cell">
+					  	<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
+					  	<div class="weui-cell__bd">
+					  		<input id="animal-heat" class="weui-input" type="number" placeholder="请输入测量体温" required>
+					  	</div>
 					  </div>
 					<div class="weui-cell">
 					    <div class="weui-cell__hd">
@@ -176,12 +182,6 @@
 						<div class="weui-cell__hd"><label class="weui-label">备注</label></div>
 						<div class="weui-cell__bd">
 							<label id="Remark"></label>
-						</div>
-					</div>
-					<div class="weui-cell">
-						<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
-						<div class="weui-cell__bd">
-							<input id="animal-heat" class="weui-input" type="number" placeholder="请输入测量体温" required>
 						</div>
 					</div>
 					<div class="weui-btn-area">
