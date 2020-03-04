@@ -33,11 +33,18 @@
 				margin-left: 5px;
 				font-weight: bold;
 			}
-			.msg-box, .form-box {
+			#check-success, #check-error {
 				display: none;
 			}
 			.weui-cell__ft {
 				text-align: right;
+			}
+			.weui-loading {
+				width: 50px;
+				height: 50px;
+			}
+			#loading {
+				display: none;
 			}
 		</style>
 	</head>
@@ -59,29 +66,23 @@
 			  </div>
 			</div>
 			<div class="msg-box">
-				<div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">系统审核结果</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label><i class="weui-icon-warn weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #fa5151;vertical-align: middle;">系统核准未通过，请联系接口人确认是否预报进园申请</span></label>
-				    </div>
+				<div id="check-error">
+				    <div class="weui-cell">
+						<div class="weui-cell__hd">
+						  <label class="weui-label">系统审核结果</label>
+						</div>
+						<div class="weui-cell__bd">
+						  <label><i class="weui-icon-warn weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #fa5151;vertical-align: middle;">系统核准未通过，请联系接口人确认是否预报进园申请</span></label>
+						</div>
+					</div>
 				  </div>
-				<div class="form-box">
+				<div id="check-success">
 					<div class="weui-cell">
 					    <div class="weui-cell__hd">
-					      <label class="weui-label">手机号</label>
+					      <label class="weui-label">系统审核结果</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label id="phMsg"></label>
-					    </div>
-					  </div>
-					<div class="weui-cell">
-					    <div class="weui-cell__hd">
-					      <label class="weui-label">申报日期</label>
-					    </div>
-					    <div class="weui-cell__bd">
-					      <label>2020-03-03</label>
+							<label><i class="weui-icon-success weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #07c160;vertical-align: middle;">系统核准通过，请测温后填写体温数据并提交，感谢配合</span></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -89,35 +90,31 @@
 					      <label class="weui-label">姓名</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>杨文成</label>
+					      <label id="EmployeeName"></label>
 					    </div>
 					  </div>
-					  <div class="weui-cell">
-					    <div class="weui-cell__hd"><label class="weui-label">身份证号<span class="req">*</span></label></div>
+					<div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">手机号</label>
+					    </div>
 					    <div class="weui-cell__bd">
-					    	<input id="shenfenzheng-id" class="weui-input" type="number" pattern="[0-9]*" placeholder="请输入身份证号" required>
+					      <label id="EmployeeId"></label>
 					    </div>
 					  </div>
-					  <div class="weui-cell">
-					    <div class="weui-cell__hd"><label class="weui-label">车牌号(如有)</label></div>
+					<div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">申报日期</label>
+					    </div>
 					    <div class="weui-cell__bd">
-					    	<input id="car-id" class="weui-input" type="text" placeholder="请输入车牌号">
+					      <label id="ApplyDate"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
 					    <div class="weui-cell__hd">
-					      <label class="weui-label">来访单位</label>
+					      <label class="weui-label">来访单位类别</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>深圳***有限公司</label>
-					    </div>
-					  </div>
-					  <div class="weui-cell">
-					    <div class="weui-cell__hd">
-					      <label class="weui-label">来访事由</label>
-					    </div>
-					    <div class="weui-cell__bd">
-					      <label>测试</label>
+					      <label id="DeptName"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -125,75 +122,223 @@
 					      <label class="weui-label">受访部门</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>质量管理中心</label>
+					      <label id="VisitedDeptName"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
 					    <div class="weui-cell__hd">
-					      <label class="weui-label">受访人</label>
+					      <label class="weui-label">A类工作地点</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>杨文成</label>
+					      <label id="OfficeAddress"></label>
 					    </div>
 					  </div>
-					 <div class="weui-cell">
-					   <div class="weui-cell__hd">
-					     <label class="weui-label">是否全程佩戴口罩</label>
-					   </div>
-					   <div class="weui-cell__bd">
-					     <label>是</label>
-					   </div>
+					  <div style="padding: 15px;"><span class="req">* </span>请填写以下信息 ：</div>
+					  <div class="weui-cells__title">来访单位</div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__bd">
+						  <input type="text" id="VisitingUnit" class="weui-input" placeholder="请输入来访单位">
+					    </div>
+					  </div>
+					  <div class="weui-cells__title">来访事由</div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__bd">
+						  <textarea id="ReasonsForVisiting" class="weui-textarea" rows="3" placeholder="请输入来访事由"></textarea>
+					    </div>
+					  </div>
+					  <div class="weui-cells__title">受访人</div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__bd">
+					      <input type="text" id="Respondents" class="weui-input" placeholder="请输入受访人">
+					    </div>
+					  </div>
+					  <div class="weui-cells__title">身份证号</div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__bd">
+					    	<input id="IDNumber" class="weui-input" type="number" pattern="[0-9]X" placeholder="请输入身份证号">
+					    </div>
+					  </div>
+					   <div class="weui-cells__title">车牌号(如有)</div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__bd">
+					    	<input id="LicensePlateNumber" class="weui-input" type="text" placeholder="请输入车牌号">
+					    </div>
+					  </div>
+					  <div class="weui-cells__title">是否佩戴口罩</div>
+					  <div class="weui-cells weui-cells_radio">
+						<label class="weui-cell weui-check__label" for="WearMasks-true">
+						  <div class="weui-cell__bd">
+							<p>是</p>
+						  </div>
+						  <div class="weui-cell__ft">
+							<input type="radio" class="weui-check" name="radio1" id="WearMasks-true" checked="checked">
+							<span class="weui-icon-checked"></span>
+						  </div>
+						</label>
+						<label class="weui-cell weui-check__label" for="WearMasks-false">
+						  <div class="weui-cell__bd">
+							<p>否</p>
+						  </div>
+						  <div class="weui-cell__ft">
+							<input type="radio" name="radio1" class="weui-check" id="WearMasks-false" data-value="否">
+							<span class="weui-icon-checked"></span>
+						  </div>
+						</label>
+					  </div>
+					  <div class="weui-cells__title">是否在名册内</div>
+					  <div class="weui-cells weui-cells_radio">
+						<label class="weui-cell weui-check__label" for="Register-true">
+						  <div class="weui-cell__bd">
+							<p>是</p>
+						  </div>
+						  <div class="weui-cell__ft">
+							<input type="radio" class="weui-check" name="radio7" id="Register-true" checked="checked">
+							<span class="weui-icon-checked"></span>
+						  </div>
+						</label>
+						<label class="weui-cell weui-check__label" for="Register-false">
+						  <div class="weui-cell__bd">
+							<p>否</p>
+						  </div>
+						  <div class="weui-cell__ft">
+							<input type="radio" name="radio7" class="weui-check" id="Register-false" data-value="否">
+							<span class="weui-icon-checked"></span>
+						  </div>
+						</label>
+					  </div>
+					 <div class="weui-cells__title">是否健康</div>
+					 <div class="weui-cells weui-cells_radio">
+					<label class="weui-cell weui-check__label" for="ProvidedHealth-true">
+					  <div class="weui-cell__bd">
+						<p>是</p>
+					  </div>
+					  <div class="weui-cell__ft">
+						<input type="radio" class="weui-check" name="radio2" id="ProvidedHealth-true" checked="checked">
+						<span class="weui-icon-checked"></span>
+					  </div>
+					</label>
+					<label class="weui-cell weui-check__label" for="ProvidedHealth-false">
+					  <div class="weui-cell__bd">
+						<p>否</p>
+					  </div>
+					  <div class="weui-cell__ft">
+						<input type="radio" name="radio2" class="weui-check" id="ProvidedHealth-false">
+						<span class="weui-icon-checked"></span>
+					  </div>
+					</label>
 					 </div>
-					 <div class="weui-cell">
-					   <div class="weui-cell__hd">
-					     <label class="weui-label">是否有提供个人健康证明</label>
-					   </div>
-					   <div class="weui-cell__bd">
-					     <label>是</label>
-					   </div>
+					<div class="weui-cells__title">是否湖北籍</div>
+					 <div class="weui-cells weui-cells_radio">
+					<label class="weui-cell weui-check__label" for="Hubei-true">
+					  <div class="weui-cell__bd">
+						<p>是</p>
+					  </div>
+					  <div class="weui-cell__ft">
+						<input type="radio" class="weui-check" name="radio3" id="Hubei-true">
+						<span class="weui-icon-checked"></span>
+					  </div>
+					</label>
+					<label class="weui-cell weui-check__label" for="Hubei-false">
+					  <div class="weui-cell__bd">
+						<p>否</p>
+					  </div>
+					  <div class="weui-cell__ft">
+						<input type="radio" name="radio3" class="weui-check" id="Hubei-false" checked="checked">
+						<span class="weui-icon-checked"></span>
+					  </div>
+					</label>
 					 </div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">是否为湖北籍</label>
-					  </div>
+					<div class="weui-cells__title">14天内是否前往湖北</div>
+					 <div class="weui-cells weui-cells_radio">
+					<label class="weui-cell weui-check__label" for="StayHubei-true">
 					  <div class="weui-cell__bd">
-					    <label>否</label>
+						<p>是</p>
 					  </div>
-					</div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">14天内是否曾前往湖北</label>
+					  <div class="weui-cell__ft">
+						<input type="radio" class="weui-check" name="radio4" id="StayHubei-true">
+						<span class="weui-icon-checked"></span>
 					  </div>
+					</label>
+					<label class="weui-cell weui-check__label" for="StayHubei-false">
 					  <div class="weui-cell__bd">
-					    <label>否</label>
+						<p>否</p>
 					  </div>
-					</div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">14天内是否接触过来自湖北的人员</label>
+					  <div class="weui-cell__ft">
+						<input type="radio" name="radio4" class="weui-check" id="StayHubei-false" checked="checked">
+						<span class="weui-icon-checked"></span>
 					  </div>
+					</label>
+					 </div>
+					 <div class="weui-cells__title">如有前往，请填写离开湖北时间</div>
+					 <div class="weui-cell">
+					 <div class="weui-cell__bd">
+					   <input class="weui-input" id="LeaveHubeiTime" type="date" value="">
+					 </div>
+				   </div>
+					<div class="weui-cells__title">是否接触湖北人员</div>
+					 <div class="weui-cells weui-cells_radio">
+					<label class="weui-cell weui-check__label" for="ContactHubei-true">
 					  <div class="weui-cell__bd">
-					    <label>否</label>
+						<p>是</p>
 					  </div>
-					</div>
-					<div class="weui-cell">
-					  <div class="weui-cell__hd">
-					    <label class="weui-label">是否与确诊病例有同一区域接触风险</label>
+					  <div class="weui-cell__ft">
+						<input type="radio" class="weui-check" name="radio5" id="ContactHubei-true">
+						<span class="weui-icon-checked"></span>
 					  </div>
+					</label>
+					<label class="weui-cell weui-check__label" for="ContactHubei-false">
 					  <div class="weui-cell__bd">
-					    <label>否</label>
+						<p>否</p>
 					  </div>
-					</div>
+					  <div class="weui-cell__ft">
+						<input type="radio" name="radio5" class="weui-check" id="ContactHubei-false" checked="checked">
+						<span class="weui-icon-checked"></span>
+					  </div>
+					</label>
+					 </div>
+					 <div class="weui-cells__title">如有接触，请填写接触时间</div>
+						 <div class="weui-cell">
+						 <div class="weui-cell__bd">
+						   <input class="weui-input" id="ContactHubeiTime" type="date" value="">
+						 </div>
+					 </div>
+					 <div class="weui-cells__title">是否与确诊病例有同一区域接触风险</div>
+					  <div class="weui-cells weui-cells_radio">
+					 <label class="weui-cell weui-check__label" for="HubeiSameCell-true">
+					   <div class="weui-cell__bd">
+					 	<p>是</p>
+					   </div>
+					   <div class="weui-cell__ft">
+					 	<input type="radio" class="weui-check" name="radio6" id="HubeiSameCell-true">
+					 	<span class="weui-icon-checked"></span>
+					   </div>
+					 </label>
+					 <label class="weui-cell weui-check__label" for="HubeiSameCell-false">
+					   <div class="weui-cell__bd">
+					 	<p>否</p>
+					   </div>
+					   <div class="weui-cell__ft">
+					 	<input type="radio" name="radio6" class="weui-check" id="HubeiSameCell-false" checked="checked">
+					 	<span class="weui-icon-checked"></span>
+					   </div>
+					 </label>
+					  </div>
+					  <div class="weui-cells__title">如有同一区域，请填写说明</div>
+					  <div class="weui-cell">
+					    <div class="weui-cell__bd">
+						  <textarea id="HubeiSameCellExplain" class="weui-textarea" rows="3" placeholder="请输入同一区域说明"></textarea>
+					    </div>
+					  </div>
 					<div class="weui-cell">
-						<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
+						<div class="weui-cell__hd"><label class="weui-label">测量体温</label></div>
 						<div class="weui-cell__bd">
 							<input id="animal-heat" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
 						</div>
 					</div>
+					<div class="weui-cells__title">备注</div>
 					<div class="weui-cell">
-						<div class="weui-cell__hd"><label class="weui-label">备注</label></div>
 						<div class="weui-cell__bd">
-							<textarea class="weui-textarea" placeholder="请输入备注信息" rows="3"></textarea>
+							<textarea id="RegisterRemark" class="weui-textarea" placeholder="请输入备注信息" rows="3"></textarea>
 						</div>
 					</div>
 					<div class="weui-btn-area">
@@ -201,6 +346,9 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="loading" class="weui-loadmore">
+			<i class="weui-loading"></i>
 		</div>
 		<script src="../js/zepto.min.js"></script>
 		<script src="../js/jquery-weui.min.js"></script>
@@ -211,21 +359,117 @@
 					if (!$('#phVal').val()) {
 						$.toptip('请输入手机号', 'error');
 					} else {
-						$('.msg-box').show()
-						$('#phMsg').html($('#phVal').val())
+						// 获取信息
+						getPersonnelMsg()
 					}
 				})
 				$('#submit-but').tap(function () {
+					// 正则表达式：
+					var idcardReg = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X)$/;
 					if (!$('#animal-heat').val()) {
 						$.toptip('请输入体温', 'error');
-					} else if (!$('#shenfenzheng-id').val()) {
+					} else if (!$('#IDNumber').val()) {
 						$.toptip('请输入身份证号', 'error');
+					} else if (!idcardReg.test($('#IDNumber').val())) {
+						$.toptip('身份证号填写不正确', 'error');
+					} else if (!$('#VisitingUnit').val()) {
+						$.toptip('请输入来访单位', 'error');
+					} else if (!$('#Respondents').val()) {
+						$.toptip('请输入受访人', 'error');
+					} else if (!$('#ReasonsForVisiting').val()) {
+						$.toptip('请输入来访事由', 'error');
+					} else if ($('#StayHubei-true').prop('checked') && !$('#LeaveHubeiTime').val()) {
+						$.toptip('请填写离开湖北时间', 'error');
+					} else if ($('#ContactHubei-true').prop('checked') && !$('#ContactHubeiTime').val()) {
+						$.toptip('请填写接触湖北人员时间', 'error');
+					} else if ($('#HubeiSameCell-true').prop('checked') && !$('#HubeiSameCellExplain').val()) {
+						$.toptip('请填写与确诊病例有同一区域说明', 'error');
 					} else {
-						$.alert("允许入园，请把此信息交于门卫查看", "提交成功", function() {
-						  history.go(-1)
-						});
+						SaveEmpEnterInfo()
 					}
 				})
+				
+				function getPersonnelMsg() {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetEnterPermissionInfo',
+					  data: {
+						 empID: $('#phVal').val(),
+						 type: 2
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  beforeSend: () => {
+					    $('#loading').show()
+					  },
+					  success: (response) => {
+					    var result = response.result
+						if (result == 0) {
+							// 未审核通过
+							$('#check-error').show()
+							$('#check-success').hide()
+						} else {
+							// 审核通过
+							var info = JSON.parse(response.info)[0]
+							$('#EmployeeName').html(info.EmployeeName)
+							$('#EmployeeId').html(info.EmployeeId)
+							$('#ApplyDate').html(info.ApplyDate.slice(0, 10))
+							$('#DeptName').html(info.DeptName)
+							$('#VisitedDeptName').html(info.VisitedDeptName)
+							$('#OfficeAddress').html(info.OfficeAddress)
+							$('#check-success').show()
+							$('#check-error').hide()
+						}
+					  },
+					  error: (xhr, status) => {
+
+					  },
+					  complete: () => {
+					    $('#loading').hide()
+					  }
+					})
+				}
+				function SaveEmpEnterInfo() {
+					var data = {
+						 empID: $('#EmployeeId').html(),
+						 type: 2,
+						 temp: $('#animal-heat').val(),
+						 IDNumber: $('#IDNumber').val(),
+						 LicensePlateNumber: $('#LicensePlateNumber').val(),
+						 VisitingUnit: $('#VisitingUnit').val(),
+						 ReasonsForVisiting: $('#ReasonsForVisiting').val(),
+						 Respondents: $('#Respondents').val(),
+						 WhetherRegister: $('#Register-true').prop('checked') ? '是':'否',
+						 WhetherWearMasks: $('#WearMasks-true').prop('checked') ? '是':'否',
+						 WhetherProvidedHealth: $('#ProvidedHealth-true').prop('checked') ? '是':'否',
+						 WhetherHubei: $('#Hubei-true').prop('checked') ? '是':'否',
+						 WhetherStayHubei: $('#StayHubei-true').prop('checked') ? '是':'否',
+						 LeaveHubeiTime: $('#LeaveHubeiTime').val(),
+						 WhetherContactHubei: $('#ContactHubei-true').prop('checked') ? '是':'否',
+						 ContactHubeiTime: $('#ContactHubeiTime').val(),
+						 WhetherHubeiSameCell: $('#HubeiSameCell-true').prop('checked') ? '是':'否',
+						 HubeiSameCellExplain: $('#HubeiSameCellExplain').val(),
+						 RegisterRemark: $('#RegisterRemark').val()
+					  }
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/SaveOuterUserEnterInfo',
+					  data: data,
+					  type: 'POST',
+					  dataType: 'json',
+					  success: (response) => {
+					    var result = response.result
+						if (result === 'ok') {
+							$.toast("提交成功", 1000, function() {
+							  location.href = 'entrance-result.html?empID=' + $('#EmployeeId').html() + '&type=2'
+							});
+						} else {
+							$.toast("提交失败，请稍后重试")
+						}
+					  },
+					  error: (xhr, status) => {
+					
+					  },
+					})
+				}
 			})
 		</script>
 	</body>

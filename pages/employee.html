@@ -33,11 +33,18 @@
 				margin-left: 5px;
 				font-weight: bold;
 			}
-			.msg-box, .form-box {
+			#check-success, #check-error {
 				display: none;
 			}
 			.weui-cell__ft {
 				text-align: right;
+			}
+			.weui-loading {
+				width: 50px;
+				height: 50px;
+			}
+			#loading {
+				display: none;
 			}
 		</style>
 	</head>
@@ -58,21 +65,31 @@
 			  </div>
 			</div>
 			<div class="msg-box">
-				<div class="weui-cell">
-				    <div class="weui-cell__hd">
-				      <label class="weui-label">系统审核结果</label>
-				    </div>
-				    <div class="weui-cell__bd">
-				      <label><i class="weui-icon-success weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #07c160;vertical-align: middle;">系统核准通过，请测温后填写提问数据并提交，感谢配合</span></label>
-				    </div>
+				<div id="check-error">
+				    <div class="weui-cell">
+						<div class="weui-cell__hd">
+						  <label class="weui-label">系统审核结果</label>
+						</div>
+						<div class="weui-cell__bd">
+						  <label><i class="weui-icon-warn weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #fa5151;vertical-align: middle;">系统核准未通过，请联系接口人确认是否预报进园申请</span></label>
+						</div>
+					</div>
 				  </div>
-				<div class="form-box">
+				<div id="check-success">
+					<div class="weui-cell">
+					    <div class="weui-cell__hd">
+					      <label class="weui-label">系统审核结果</label>
+					    </div>
+					    <div class="weui-cell__bd">
+					      <label><i class="weui-icon-success weui-icon_msg page-icon" style="font-size: 18px;margin-right: 5px;"></i><span style="color: #07c160;vertical-align: middle;">系统核准通过，请测温后填写体温数据并提交，感谢配合</span></label>
+					    </div>
+					  </div>
 					<div class="weui-cell">
 					    <div class="weui-cell__hd">
 					      <label class="weui-label">工号</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label id="cardIdMsg"></label>
+					      <label id="EmployeeId"></label>
 					    </div>
 					  </div>
 					<div class="weui-cell">
@@ -80,7 +97,7 @@
 					      <label class="weui-label">申报日期</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>2020-03-03</label>
+					      <label id="ApplyDate"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -88,7 +105,7 @@
 					      <label class="weui-label">姓名</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>杨文成</label>
+					      <label id="EmployeeName"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -96,7 +113,7 @@
 					      <label class="weui-label">部门</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>质量管理中心</label>
+					      <label id="DeptName"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -104,7 +121,7 @@
 					      <label class="weui-label">班组</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>信息化</label>
+					      <label id="GroupName"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -112,7 +129,7 @@
 					      <label class="weui-label">申请理由</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>测试</label>
+					      <label id="ApplyReason"></label>
 					    </div>
 					  </div>
 					  <div class="weui-cell">
@@ -120,23 +137,15 @@
 					      <label class="weui-label">现场办公理由</label>
 					    </div>
 					    <div class="weui-cell__bd">
-					      <label>测试</label>
+					      <label id="SiteOfficeReason"></label>
 					    </div>
 					  </div>
-					 <div class="weui-cell">
-					   <div class="weui-cell__hd">
-					     <label class="weui-label">工作地点</label>
-					   </div>
-					   <div class="weui-cell__bd">
-					     <label>深圳南山</label>
-					   </div>
-					 </div>
 					 <div class="weui-cell">
 					   <div class="weui-cell__hd">
 					     <label class="weui-label">A类工作地点</label>
 					   </div>
 					   <div class="weui-cell__bd">
-					     <label>深圳南山</label>
+					     <label id="OfficeAddress"></label>
 					   </div>
 					 </div>
 					<div class="weui-cell">
@@ -144,7 +153,7 @@
 					    <label class="weui-label">是否区域责任人</label>
 					  </div>
 					  <div class="weui-cell__bd">
-					    <label>否</label>
+					    <label id="IsAreaOwner"></label>
 					  </div>
 					</div>
 					<div class="weui-cell">
@@ -152,7 +161,7 @@
 					    <label class="weui-label">责任区域</label>
 					  </div>
 					  <div class="weui-cell__bd">
-					    <label>测试</label>
+					    <label id="ResponsibilityArea"></label>
 					  </div>
 					</div>
 					<div class="weui-cell">
@@ -160,19 +169,19 @@
 					    <label class="weui-label">责任区域编号</label>
 					  </div>
 					  <div class="weui-cell__bd">
-					    <label>测试</label>
+					    <label id="ResponsibilityAreaNo"></label>
 					  </div>
-					</div>
-					<div class="weui-cell">
-						<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
-						<div class="weui-cell__bd">
-							<input id="animal-heat" class="weui-input" type="number" pattern="[0-9]." placeholder="请输入测量体温" required>
-						</div>
 					</div>
 					<div class="weui-cell">
 						<div class="weui-cell__hd"><label class="weui-label">备注</label></div>
 						<div class="weui-cell__bd">
-							<textarea class="weui-textarea" placeholder="请输入备注信息" rows="3"></textarea>
+							<label id="Remark"></label>
+						</div>
+					</div>
+					<div class="weui-cell">
+						<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
+						<div class="weui-cell__bd">
+							<input id="animal-heat" class="weui-input" type="number" placeholder="请输入测量体温" required>
 						</div>
 					</div>
 					<div class="weui-btn-area">
@@ -180,6 +189,9 @@
 					</div>
 				</div>
 			</div>
+		</div>
+		<div id="loading" class="weui-loadmore">
+			<i class="weui-loading"></i>
 		</div>
 		<script src="../js/zepto.min.js"></script>
 		<script src="../js/jquery-weui.min.js"></script>
@@ -190,19 +202,90 @@
 					if (!$('#cardIdVal').val()) {
 						$.toptip('请输入工号', 'error');
 					} else {
-						$('.msg-box, .form-box').show()
-						$('#cardIdMsg').html($('#cardIdVal').val())
+						// 获取信息
+						getPersonnelMsg()
 					}
 				})
 				$('#submit-but').tap(function () {
 					if (!$('#animal-heat').val()) {
 						$.toptip('请输入体温', 'error');
 					} else {
-						$.toast("提交成功", 1000, function() {
-						  location.href = 'entrance-result.html'
-						});
+						SaveEmpEnterInfo()
 					}
 				})
+				
+				function getPersonnelMsg() {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetEnterPermissionInfo',
+					  data: {
+						 empID: $('#cardIdVal').val(),
+						 type: 1
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  beforeSend: () => {
+					    $('#loading').show()
+					  },
+					  success: (response) => {
+					    var result = response.result
+						if (result == 0) {
+							// 未审核通过
+							$('#check-error').show()
+							$('#check-success').hide()
+						} else {
+							// 审核通过
+							var info = JSON.parse(response.info)[0]
+							$('#EmployeeId').html(info.EmployeeId)
+							$('#ApplyDate').html(info.ApplyDate.slice(0, 10))
+							$('#EmployeeName').html(info.EmployeeName)
+							$('#DeptName').html(info.DeptName)
+							$('#GroupName').html(info.GroupName)
+							$('#ApplyReason').html(info.ApplyReason)
+							$('#SiteOfficeReason').html(info.SiteOfficeReason)
+							$('#OfficeAddress').html(info.OfficeAddress)
+							$('#IsAreaOwner').html(info.IsAreaOwner)
+							$('#ResponsibilityArea').html(info.ResponsibilityArea)
+							$('#ResponsibilityAreaNo').html(info.ResponsibilityAreaNo)
+							$('#Remark').html(info.Remark)
+							$('#check-success').show()
+							$('#check-error').hide()
+						}
+					  },
+					  error: (xhr, status) => {
+				
+					  },
+					  complete: () => {
+					    $('#loading').hide()
+					  }
+					})
+				}
+				
+				function SaveEmpEnterInfo() {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/SaveEmpEnterInfo',
+					  data: {
+						 empID: $('#EmployeeId').html(),
+						 type: 1,
+						 temp: $('#animal-heat').val()
+					  },
+					  type: 'POST',
+					  dataType: 'json',
+					  success: (response) => {
+					    var result = response.result
+						console.log(response)
+						if (result === 'ok') {
+							$.toast("提交成功", 1000, function() {
+							  location.href = 'entrance-result.html?empID=' + $('#EmployeeId').html() + '&type=1'
+							});
+						} else {
+							$.toast("提交失败，请稍后重试")
+						}
+					  },
+					  error: (xhr, status) => {
+					
+					  },
+					})
+				}
 			})
 		</script>
 	</body>
