@@ -46,6 +46,9 @@
 			#loading {
 				display: none;
 			}
+			.search-header {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -53,7 +56,7 @@
 			<div class="title">进出园区登记表--公司员工</div>
 		</div>
 		<div class="content">
-			<div class="weui-cells weui-cells_form">
+			<div class="weui-cells weui-cells_form search-header">
 			  <div class="weui-cell">
 			    <div class="weui-cell__hd"><label class="weui-label">工号</label></div>
 			    <div class="weui-cell__bd">
@@ -196,6 +199,7 @@
 		<script src="../js/zepto.min.js"></script>
 		<script src="../js/jquery-weui.min.js"></script>
 		<script src="../js/zepto.touch.js"></script>
+		<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
 		<script>
 			$(function () {
 				$('#get-msg-btn').tap(function () {
@@ -204,7 +208,7 @@
 					} else {
 						$('#animal-heat').val('')
 						// 获取信息
-						getPersonnelMsg()
+						getPersonnelMsg($('#cardIdVal').val())
 					}
 				})
 				$('#submit-but').tap(function () {
@@ -216,11 +220,11 @@
 					}
 				})
 				
-				function getPersonnelMsg() {
+				function getPersonnelMsg(val) {
 					$.ajax({
 					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetEnterPermissionInfo',
 					  data: {
-						 empID: $('#cardIdVal').val(),
+						 empID: val,
 						 type: 1
 					  },
 					  type: 'GET',
@@ -234,6 +238,8 @@
 							// 未审核通过
 							$('#check-error').show()
 							$('#check-success').hide()
+						} else if (result == 2) {
+							$.toast('已存在入园信息，请勿重复提交')
 						} else {
 							// 审核通过
 							var info = JSON.parse(response.info)[0]
@@ -287,6 +293,44 @@
 						$.toast("提交失败，请稍后重试")
 					  },
 					})
+				}
+
+				// 获取工号
+				function getUserId(code) {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetUserJobNumber',
+					  data: {
+						 code: code
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  success: (response) => {
+						  if (response) {
+							  getPersonnelMsg(response)
+						  } else {
+							 $('.search-header').show() 
+						  }
+					  },
+					  error: (xhr, status) => {
+						  $('.search-header').show()
+					  },
+					})
+				}
+				
+				if (dd.env.platform === 'notInDingTalk') {
+					$('.search-header').show()
+				} else {
+					dd.ready(function () {
+					    // dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
+					    dd.runtime.permission.requestAuthCode({
+					        corpId: "dingdbfb8a312e02f0e835c2f4657eb6378f",
+					        onSuccess: function (result) {
+								getUserId(result['code'])
+					        },
+					        onFail: function (err) {
+					        }				
+					    });
+					});
 				}
 			})
 		</script>

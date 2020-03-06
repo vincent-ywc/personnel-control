@@ -58,6 +58,9 @@
 				margin-left: 5px;
 				font-weight: bold;
 			}
+			.search-header {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -65,26 +68,28 @@
 			<div class="title">出园登记</div>
 		</div>
 		<div class="content">
-			<div class="weui-cells">
-			  <div class="weui-cell weui-cell_select">
-				<div class="weui-cell__bd">
-				  <select class="weui-select" name="select1" id="selectType">
-					<option selected="" value="0">请选择人员类型</option>
-					<option value="1">我是员工</option>
-					<option value="2">我是访客</option>
-				  </select>
+			<div class="search-header">
+				<div class="weui-cells">
+				  <div class="weui-cell weui-cell_select">
+					<div class="weui-cell__bd">
+					  <select class="weui-select" name="select1" id="selectType">
+						<option selected="" value="0">请选择人员类型</option>
+						<option value="1">我是员工</option>
+						<option value="2">我是访客</option>
+					  </select>
+					</div>
+				  </div> 
 				</div>
-			  </div> 
-			</div>
-			<div class="weui-cells weui-cells_form" id="userIdInput">
-			  <div class="weui-cell">
-			    <div class="weui-cell__bd">
-				  <input id="cardIdVal" class="weui-input" type="text" required>
-			    </div>
-				<div class="weui-cell__ft">
-				  <button class="weui-vcode-btn" id="get-msg-btn">获取信息</button>
+				<div class="weui-cells weui-cells_form" id="userIdInput">
+				  <div class="weui-cell">
+				    <div class="weui-cell__bd">
+					  <input id="cardIdVal" class="weui-input" type="text" required>
+				    </div>
+					<div class="weui-cell__ft">
+					  <button class="weui-vcode-btn" id="get-msg-btn">获取信息</button>
+					</div>
+				  </div>
 				</div>
-			  </div>
 			</div>
 			<div class="msg-box">
 				<div class="form-box">
@@ -203,6 +208,7 @@
 		<script src="../js/zepto.min.js"></script>
 		<script src="../js/jquery-weui.min.js"></script>
 		<script src="../js/zepto.touch.js"></script>
+		<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
 		<script>
 			$(function () {
 				var IDFlag = ''
@@ -214,7 +220,7 @@
 					} else {
 						$('#animal-heat-employee').val('')
 						$('#animal-heat-visitor').val()
-						getPersonnelMsg()
+						getPersonnelMsg($('#cardIdVal').val(), $('#selectType').val())
 					}
 				})
 				$('#submit-but').tap(function () {
@@ -237,13 +243,13 @@
 					}
 				})
 				
-				function getPersonnelMsg() {
-					typeFlag = $('#selectType').val()
+				function getPersonnelMsg(id, type) {
+					typeFlag = type
 					$.ajax({
 					  url: 'http://106.3.225.253:8087/api/EntrancePermit/QueryUserEnterData',
 					  data: {
-						 empID: $('#cardIdVal').val(),
-						 type: $('#selectType').val()
+						 empID: id,
+						 type: type
 					  },
 					  type: 'GET',
 					  dataType: 'json',
@@ -263,7 +269,7 @@
 							$('.ArriveOfficeDate').html(info.ArriveOfficeDate.replace(/T/g, ' '))
 							$('.Temperature').html(info.Temperature + '℃')
 							$('.VisitingUnit').html(info.VisitingUnit)
-							if ($('#selectType').val() == 1) {
+							if (type == 1) {
 								$('#employee-box').show()
 								$('#visitor-box').hide()
 							} else {
@@ -312,6 +318,44 @@
 						$.toast("提交失败，请稍后重试")
 					  },
 					})
+				}
+				
+				// 获取工号
+				function getUserId(code) {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetUserJobNumber',
+					  data: {
+						 code: code
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  success: (response) => {
+						  if (response) {
+							  getPersonnelMsg(response, 1)								
+						  } else {
+							 $('.search-header').show() 
+						  }
+					  },
+					  error: (xhr, status) => {
+						  $('.search-header').show()
+					  },
+					})
+				}
+				
+				if (dd.env.platform === 'notInDingTalk') {
+					$('.search-header').show()
+				} else {
+					dd.ready(function () {
+					    // dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
+					    dd.runtime.permission.requestAuthCode({
+					        corpId: "dingdbfb8a312e02f0e835c2f4657eb6378f",
+					        onSuccess: function (result) {
+								getUserId(result['code'])
+					        },
+					        onFail: function (err) {
+					        }				
+					    });
+					});
 				}
 			})
 		</script>
