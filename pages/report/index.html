@@ -21,22 +21,23 @@
 				border: 1px solid rgba(0,0,0,0);
 			}
 			.header {
-				margin: 10% auto 20px;
+				margin: 20px auto 20px;
 				color: #555;
 			}
 			.report-box {
+				height: 100%;
 				display: none;
 			}
 			button {
 				border: none;
-				margin: 0 auto 20px;
+				margin: 0 auto 5%;
 				padding: 0;
 				outline-style: none;
 				width: 80%;
-				height: 80px;
+				height: 10%;
 				border-radius: 20px;
 				display: block;
-				font-size: 21px;
+				font-size: 18px;
 				color: #fff;
 			}
 			.total-apply {
@@ -76,6 +77,10 @@
 				color: #333;
 				text-decoration: underline;
 			}
+			.tips-error {
+				margin-top: 20px;
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
@@ -89,7 +94,10 @@
 			<button type="button" class="total-out"></button>
 			<button type="button" class="current-in"></button>
 			<div class="getMsg getAllMsg"><a href="district-report.html">查看详情</a></div>
-			<div class="getMsg getDetailMsg"><a href="javascript:;">查看详情</a></div>
+			<div class="getMsg getDetailMsg"><a href="javascript:;" id="get-detail-info">查看详情</a></div>
+		</div>
+		<div class="tips-error">
+			<p style="text-align: center;color:#888;"></p>
 		</div>
 		<div id="loading" class="weui-loadmore">
 			<i class="weui-loading"></i>
@@ -97,23 +105,30 @@
 		<script src="../../js/zepto.min.js"></script>
 		<script src="../../js/jquery-weui.min.js"></script>
 		<script src="../../js/zepto.touch.js"></script>
+		<script src="../../js/common.js"></script>
 		<script>
 			$(function(){
 				// 获取当前日期
 				$('.date').html(dateFormat(new Date(), 'yyyy-mm-dd'))
-				if (getParam('address')) {
+				// url存在address参数，为具体园区数据
+				if (location.search.indexOf('address') >= 0) {
 					$('.title').html(getParam('address') + '园区统计')
 					$('.getAllMsg').hide()
-					$('.getDetailMsg').hide()
+					$('#get-detail-info').on('tap', function () {
+						location.href = 'per-detail.html?address=' + getParam('address')
+					})
+					QueryTodaySummaryData(getParam('address'))
 				} else {
+					// 不存在address参数，为主页总数据
 					$('.getDetailMsg').hide()
+					QueryTodaySummaryData('all')
 				}
-				QueryTodaySummaryData()
-				function QueryTodaySummaryData() {
+				// 获取数据
+				function QueryTodaySummaryData(address) {
 					$.ajax({
 					  url: 'http://106.3.225.253:8087/api/EntrancePermit/QueryTodaySummaryData',
 					  data: {
-						 address: getParam('address') || ''
+						 address: address
 					  },
 					  type: 'GET',
 					  dataType: 'json',
@@ -130,7 +145,8 @@
 							 $('.current-in').html('实时在园人数：' + info.CURRENTIN)
 							 $('.report-box').show()
 						 } else {
-							 $.toast("获取数据失败，请稍后重试")
+							 $('.tips-error p').html(response.info || '暂无数据')
+							 $('.tips-error').show()
 						 }
 						 $('#loading').hide()
 					  },
@@ -141,88 +157,6 @@
 					})
 				}
 			})
-			
-			var dateFormat = function() {
-			    var token = /d{1,4}|m{1,4}|yy(?:yy)?|([HhMsTt])\1?|[LloS]|"[^"]*"|'[^']*'/g,
-			        pad = function(val, len) {
-			            val = String(val);
-			            len = len || 2;
-			            while (val.length < len) {
-			                val = "0" + val;
-			            }
-			            return val;
-			        },
-			        masks = {
-			            "default": 'yyyy-mm-dd HH:MM:ss',
-			            "shortDate": 'm/d/yy',
-			            "shortTime": 'h:MM TT',
-			            "mediumTime": 'h:MM:ss TT',
-			            "longTime": 'h:MM:ss TT Z',
-			            "isoDate": 'yyyy-mm-dd',
-			            "isoTime": 'HH:MM:ss',
-			            "isoDateTime": 'yyyy-mm-dd\'T\'HH:MM:ss',
-			            "isoUtcDateTime": 'UTC:yyyy-mm-dd\'T\'HH:MM:ss\'Z\''
-			        };
-			
-			    return function(date, mask, utc) {
-			
-			        if (!(date instanceof Date)) {
-			            date = new Date(date);
-			        }
-			
-			        if (isNaN(date)) {
-			            throw new SyntaxError("invalid date");
-			        }
-			
-			        mask = masks[mask] || mask || masks["default"];
-			
-			        var _ = utc ? "getUTC" : "get",
-			            d = date[_ + "Date"](),
-			            D = date[_ + "Day"](),
-			            m = date[_ + "Month"](),
-			            y = date[_ + "FullYear"](),
-			            H = date[_ + "Hours"](),
-			            M = date[_ + "Minutes"](),
-			            s = date[_ + "Seconds"](),
-			            L = date[_ + "Milliseconds"](),
-			            o = utc ? 0 : date.getTimezoneOffset(),
-			            flags = {
-			                d: d,
-			                dd: pad(d),
-			                m: m + 1,
-			                mm: pad(m + 1),
-			                yy: String(y).slice(2),
-			                yyyy: y,
-			                h: H % 12 || 12,
-			                hh: pad(H % 12 || 12),
-			                H: H,
-			                HH: pad(H),
-			                M: M,
-			                MM: pad(M),
-			                s: s,
-			                ss: pad(s),
-			                l: pad(L, 3),
-			                L: pad(L > 99 ? Math.round(L / 10) : L),
-			                t: H < 12 ? "a" : "p",
-			                tt: H < 12 ? "am" : "pm",
-			                T: H < 12 ? "A" : "P",
-			                TT: H < 12 ? "AM" : "PM",
-			                o: (o > 0 ? "-" : "+") + pad(Math.floor(Math.abs(o) / 60) * 100 + Math.abs(o) % 60, 4),
-			                S: ["th", "st", "nd", "rd"][d % 10 > 3 ? 0 : (d % 100 - d % 10 != 10) * d % 10]
-			            };
-			
-			        return mask.replace(token, function($0) {
-			            return $0 in flags ? flags[$0] : $0.slice(1, $0.length - 1);
-			        });
-			    };
-			}();
-			
-			// 获取url参数
-			function getParam(name) {
-				var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i"); 
-				  var r = window.location.search.substr(1).match(reg); 
-				  if (r != null) return decodeURI(r[2]); return null; 
-			}
 		</script>
 	</body>
 </html>

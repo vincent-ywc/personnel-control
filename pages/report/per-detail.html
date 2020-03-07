@@ -9,38 +9,27 @@
 		<link rel="stylesheet" href="../../css/jquery-weui.min.css">
 		<title>出入园报表系统</title>
 		<style>
-			html {
-				height: 100%;
-			}
 			body {
 				margin: 0px;
 				padding: 0px;
-				height: 100%;
-				background:linear-gradient(to bottom,#CBFAF3, #F0F8E3);
-				overflow: hidden;
-				border: 1px solid rgba(0,0,0,0);
 			}
 			.header {
-				margin: 5% auto 20px;
-				color: #555;
-			}
-			.report-box {
-				height: 100%;
-				display: none;
-			}
-			.report-box > div {
-				height: 100%;
+				height: 46px;
+				line-height: 46px;
+				background-color: #69c;
+				color: #fff;
+				text-align: center;
 			}
 			button {
 				border: none;
-				margin: 0 auto 4%;
+				margin: 0 auto 20px;
 				padding: 0;
 				outline-style: none;
 				width: 80%;
-				height: 10%;
+				height: 80px;
 				border-radius: 20px;
 				display: block;
-				font-size: 18px;
+				font-size: 21px;
 				color: #fff;
 			}
 			button:first-of-type {
@@ -63,10 +52,6 @@
 				font-size: 20px;
 				margin: 0;
 				padding: 0;
-				line-height: 36px;
-			}
-			.date {
-				font-size: 24px;
 			}
 			.weui-loading {
 				width: 50px;
@@ -87,12 +72,47 @@
 				margin-top: 20px;
 				display: none;
 			}
+			table{
+				font-size: 14px;
+				color: #5a5a5a; 
+				width: 98%;
+				table-layout: fixed;
+				margin: 0 auto;
+			}
+			table tr {
+				height: 40px;
+				line-height: 40px;
+			}
+			table tr th{
+				overflow:hidden;
+				text-overflow:ellipsis;
+				white-space:nowrap;
+			}
+			table tr:first-of-type th{
+				border-bottom: 1px solid #000;
+				font-size: 16px;
+			}
+			table tr th:first-of-type, table tr td:first-of-type {
+				width: 10%;
+			}
+			table tr th:nth-of-type(2), table tr td:nth-of-type(2) {
+				width: 30%;
+			}
+			table tr td {
+				overflow:hidden;
+				text-overflow:ellipsis;
+				white-space:nowrap;
+				text-align: center;
+				border-bottom: 1px solid #999;
+			}
+			.report-box {
+				display: none;
+			}
 		</style>
 	</head>
 	<body>
 		<div class="header">
-			<p class="date"></p>
-			<p>各园区统计</p>
+			<p class="title"></p>
 		</div>
 		<div class="report-box">
 		</div>
@@ -101,16 +121,34 @@
 		</div>
 		<div id="loading" class="weui-loadmore">
 			<i class="weui-loading"></i>
+			<span class="weui-loadmore__tips">正在加载</span>
 		</div>
 		<script type="text/template" id="temp-report">
-			<div>
+			<table border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<th>序号</th>
+					<th>部门</th>
+					<th>姓名</th>
+					<th>入园时间</th>
+					<th>出园时间</th>
+				</tr>
 				<% for(var i in list) { %>
 				<% var item = list[i]; %>
-				<button type="button" data-address="<%= item.OfficeAddress %>">
-				    <%= item.OfficeAddress %>申报/在园人数: <%= item.Column1 %>
-				</button>
+				<tr>
+					<td><%= parseInt(i) + 1 %></td>
+					<td><%= item.DeptName %></td>
+					<td><%= item.EmployeeName %></td>
+					<td><%= item.ArriveOfficeDate.slice(11) %></td>
+					<td>
+						<% if (item.LeaveOfficeDate) { %>
+							<%= item.LeaveOfficeDate.slice(11) %>
+						<% } else { %>
+							未出园
+						<% } %>
+					</td>
+				</tr>
 				<% } %>
-			</div>
+			</table>
 		</script>
 		<script src="../../js/zepto.min.js"></script>
 		<script src="../../js/jquery-weui.min.js"></script>
@@ -119,14 +157,14 @@
 		<script>
 			$(function(){
 				// 获取当前日期
-				$('.date').html(dateFormat(new Date(), 'yyyy-mm-dd'))
+				$('.title').html(dateFormat(new Date(), 'yyyy-mm-dd') + ' ' + getParam('address') + '园区明细')
 				
-				QueryTodaySummaryData()
-				function QueryTodaySummaryData(code) {
+				getDetailInfo()
+				function getDetailInfo(code) {
 					$.ajax({
-					  url: 'http://106.3.225.253:8087/api/EntrancePermit/QueryTodaySummaryDataGourpByAddress',
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/QueryTodayAddressDataDetailInfo',
 					  data: {
-						 address: ''
+						 address: getParam('address')
 					  },
 					  type: 'GET',
 					  dataType: 'json',
@@ -136,21 +174,11 @@
 					  success: (response) => {
 						 if (response.result == 1) {
 							 var info = JSON.parse(response.info)
-							 var arr = info.reverse()
-							var tempItem = arr[0]
-							 arr.shift()
-							 arr.push(tempItem)
-							 for (var i=0; i < arr.length; i++) {
-								 arr[i]['Column1'] = arr[i]['Column1'].replace(/\\/g,'/')
-							 }
 							 var html = template("#temp-report", {
-							 	list: arr
+							 	list: info
 							 })
 							 $('.report-box').html(html)
 							 $('.report-box').show()							 
-							 $('button').on('tap', function () {
-							 	location.href = 'index.html?address=' + encodeURIComponent($(this).attr('data-address'))
-							 })
 						 } else {
 							 $('.tips-error p').html(response.info || '暂无数据')
 							 $('.tips-error').show()
@@ -167,3 +195,4 @@
 		</script>
 	</body>
 </html>
+
