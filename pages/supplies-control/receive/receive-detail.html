@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>防疫物资服务平台</title>
+		<link rel="stylesheet" href="../../../css/weui.min.css">
+		<link rel="stylesheet" href="../../../css/jquery-weui.min.css">
+		<style>
+			.header {
+				height: 46px;
+				line-height: 46px;
+				background-color: #69c;
+				color: #fff;
+				text-align: center;
+				font-size: 20px;
+			}
+			.content {
+				padding: 6px 16px 0;
+			}
+			.weui-cells {
+				margin-top: 0 !important;
+			}
+			.weui-label {
+				color: #888;
+			}
+			.req {
+				color: red;
+				margin-left: 5px;
+				font-weight: bold;
+			}
+			#check-success, #check-error {
+				display: none;
+			}
+			.weui-cell__ft {
+				text-align: right;
+			}
+			.weui-loading {
+				width: 50px;
+				height: 50px;
+			}
+			#loading {
+				display: none;
+			}
+			.weui-cells_radio .weui-cell__bd {
+				-webkit-box-flex: 0.3 !important;
+				-webkit-flex: 0.3 !important;
+				flex: 0.3 !important;
+			}
+			#MaterialQuantity {
+				width: 70%;
+			}
+			#submit-but {
+				 background-color: rgba(80, 121, 155, 0.7);
+			}
+			.weui-select {
+				padding-left: 0 !important;
+			}
+			.msg-box {
+				display: none;
+			}
+			.tips-error {
+				margin-top: 20px;
+				display: none;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<div class="title">申请详情</div>
+		</div>
+		<div class="content">
+			<div class="msg-box">
+			  <div class="weui-cell">
+				  <div class="weui-cell__hd">
+					<label class="weui-label">物资类别</label>
+				  </div>
+				<div class="weui-cell__bd">
+					<label id="MaterialCategory"></label>
+				</div>
+			  </div>
+			  <div class="weui-cell">
+				  <div class="weui-cell__hd">
+					<label class="weui-label">物资编号</label>
+				  </div>
+				<div class="weui-cell__bd" id="SerialNumberBox">
+					<label id="MaterialNumber"></label>
+				</div>
+			  </div>
+			<div class="weui-cell">
+			  <div class="weui-cell__hd">
+				<label class="weui-label">物资名称</label>
+			  </div>
+				<div class="weui-cell__bd">
+					<label id="MaterialName"></label>
+				</div>
+			</div>
+			<div class="weui-cell">
+			  <div class="weui-cell__hd">
+				<label class="weui-label">物资数量</label>
+			  </div>
+				<div class="weui-cell__bd">
+					<label id="MaterialQuantity"></label>
+					<lable id="MaterialUnit"></lable>
+				</div>
+			</div>
+			<div class="weui-cell">
+			  <div class="weui-cell__hd">
+				<label class="weui-label">申请时间</label>
+			  </div>
+				<div class="weui-cell__bd">
+					<label id="ApplyDTime"></label>
+				</div>
+			</div>
+			<div class="weui-cell">
+			  <div class="weui-cell__hd">
+				<label class="weui-label">申请事由</label>
+			  </div>
+				<div class="weui-cell__bd">
+					<label id="Remark"></label>
+				</div>
+			</div>
+			<div class="weui-cell">
+			  <div class="weui-cell__hd">
+				<label class="weui-label">发放状态</label>
+			  </div>
+				<div class="weui-cell__bd">
+					<label id="ModifiedDTime"></label>
+				</div>
+			</div>
+			</div>
+			<div class="tips-error">
+				<p style="text-align: center;color:#888;"></p>
+			</div>
+		</div>
+		<div id="loading" class="weui-loadmore">
+			<i class="weui-loading"></i>
+		</div>
+		<script src="../../../js/zepto.min.js"></script>
+		<script src="../../../js/zepto.touch.js"></script>
+		<script src="../../../js/jquery-weui.min.js"></script>
+		<script src="../../../js/common.js"></script>
+		<script>
+			$(function () {
+				getDetailInfo()
+				
+				// 提交
+				function getDetailInfo() {
+					var data = {
+						 ID: getParam('id')
+					  }
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/DiseaseInStore/QueryMaterialOutDataByID',
+					  data: data,
+					  type: 'GET',
+					  dataType: 'json',
+					  beforeSend: () => {
+					    $('#loading').show()
+					  },
+					  success: function (response) {
+					    var result = response.result
+					    if (result != 0) {
+							var info = JSON.parse(response.info)[0]
+							console.log(info)
+							$('#MaterialCategory').html(info.MaterialCategory)
+							$('#MaterialNumber').html(info.MaterialNumber)
+							$('#MaterialName').html(info.MaterialName)
+							$('#MaterialQuantity').html(info.MaterialQuantity)
+							$('#MaterialUnit').html(info.MaterialUnit)
+							$('#ApplyDTime').html(info.ApplyDTime.replace('T', ' ').slice(0, 19))
+							$('#Remark').html(info.Remark)
+							if (info.HandleStatus == 1) {
+								$('#ModifiedDTime').html('待发放')	
+							} else if (info.HandleStatus == 2) {
+								$('#ModifiedDTime').html('已发放<p>' + info.ModifiedDTime.replace('T', ' ').slice(0, 19) + '</p>')	
+							} else if (info.HandleStatus == 3) {
+								$('#ModifiedDTime').html('已退回')
+							}
+							$('.msg-box').show()
+							$('.tips-error').hide()
+					    } else {
+					    	$('.msg-box').hide()
+							$('.tips-error p').html(response.info)
+					    	$('.tips-error').show()
+					    }
+					  },
+					  error: function () {
+						  $.toast("获取明细失败，请稍后重试")
+					  },
+					  complete: () => {
+					     $('#loading').hide()
+					  }
+					})
+				}
+			})
+		</script>
+	</body>
+</html>

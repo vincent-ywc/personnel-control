@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../css/weui.min.css">
+		<link rel="stylesheet" href="../../css/jquery-weui.min.css">
+		<title>防疫物资服务平台</title>
+		<style>
+			html {
+				height: 100%;
+			}
+			body {
+				margin: 0px;
+				padding: 0px;
+				height: 100%;
+				background:linear-gradient(to bottom,#CBFAF3, #F0F8E3);
+				overflow: hidden;
+				border: 1px solid rgba(0,0,0,0);
+			}
+			.header {
+				margin: 15% auto 6%;
+				color: #555;
+				text-align: center;
+				font-size: 22px;
+			}
+			.btn-box {
+				height: 100%;
+			}
+			a {
+				border: none;
+				margin: 0 auto 6%;
+				padding: 0;
+				outline-style: none;
+				width: 80%;
+				height: 10%;
+				border-radius: 20px;
+				display: block;
+				font-size: 18px;
+				color: #fff;
+				text-align: center;
+				line-height: 66px;
+			}
+			.total-apply {
+				background-color: #35B0CF;
+			}
+			.total-in {
+				background-color: #33cabb;
+			}
+			.total-out {
+				background-color: #15c377;
+			}
+			.current-in {
+				background-color: rgba(80, 121, 155, 0.7);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<p class="title">防疫物资服务平台</p>
+		</div>
+		<div class="btn-box">
+			<a class="total-apply" href="warehouse/warehouse.html">入库</a>
+			<a class="total-in" href="receive/receive-record.html">申请</a>
+			<a class="total-out" href="issue/apply-backlog.html">发放</a>
+			<a class="current-in" href="inventory/inventory.html">库存</a>
+		</div>
+	</body>
+</html>

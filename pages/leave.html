@@ -214,6 +214,7 @@
 				var IDFlag = ''
 				var typeFlag = ''
 				var EmployeeId = ''
+				var tapFlag = true
 				$('#get-msg-btn').tap(function () {
 					if (!$('#cardIdVal').val()) {
 						$.toptip('请输入工号/手机号', 'error');
@@ -227,7 +228,13 @@
 					if (!$('#animal-heat-employee').val() && !$('#animal-heat-visitor').val()) {
 						$.toptip('请填写测量体温', 'error');
 					} else {
-						UpdateUserOutData()
+						if (tapFlag) {
+							tapFlag = false
+							UpdateUserOutData()
+							setTimeout(function () {
+								tapFlag = true
+							}, 3000)
+						}
 					}
 				})
 				

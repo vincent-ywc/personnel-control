@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>防疫物资服务平台</title>
+		<link rel="stylesheet" href="../../../css/weui.min.css">
+		<link rel="stylesheet" href="../../../css/jquery-weui.min.css">
+		<style>
+			.header {
+				height: 46px;
+				line-height: 46px;
+				background-color: #69c;
+				color: #fff;
+				text-align: center;
+				position: relative;
+			}
+			.weui-tabbar {
+			    height: 46px;
+			    line-height: 46px;
+				position: relative;
+			    top: 0;
+				border-bottom: 1px solid #888;
+				margin-bottom: 6px;
+			}
+			.weui-tabbar .weui-tabbar__item{
+				font-size: 16px;
+				background-color: #efeff4;
+				padding: 0;
+				color: #000;
+			}
+			.tab-active {
+				color: #007AFF !important;
+				border-bottom: 2px solid #007aff;
+			}
+			.table-header {
+				font-size: 15px;
+				height: 40px;
+				line-height: 40px;
+				border-bottom: 1px solid #000;
+				color: #5a5a5a;
+				font-weight: bold;
+			}
+			ul{
+				font-size: 14px;
+				color: #5a5a5a; 
+				width: 98%;
+				table-layout: fixed;
+				margin: 0 auto;
+			}
+			ul li {
+				height: 70px;
+				line-height: 30px;
+				text-align: center;
+			}
+			.table-item {
+				height: 65px;
+				border-bottom: 1px solid #999;
+			}
+			.w10 {
+				width: 10%;
+			}
+			.weui-loading {
+				width: 50px;
+				height: 50px;
+			}
+			#loading {
+				display: none;
+			}
+			.select-all {
+				position: absolute;
+				top: -2%;
+				right: 4%;
+			}
+			.weui-cells_checkbox .weui-check:checked+.weui-icon-checked:before {
+				color: #d5d5d6 !important;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<span class="title"></span>
+			<div class="weui-cells_checkbox select-all">
+			  <label class="weui-check__label" for="selectAll">
+				<div>
+				  <input type="checkbox" class="weui-check" name="checkbox1" id="selectAll">
+				  <i class="weui-icon-checked"></i>
+				</div>
+			  </label>
+			</div>
+		</div>
+		<div class="weui-tabbar">
+		    <a href="javascript:;" class="weui-tabbar__item tab-active" data-type="1">
+		      入库明细
+		    </a>
+		    <a href="javascript:;" class="weui-tabbar__item" data-type="2">
+		      申请明细
+		    </a>
+		    <a href="javascript:;" class="weui-tabbar__item" data-type="3">
+		      发放明细
+		    </a>
+		  </div>
+		  <div class="detail-box">
+			  
+		  </div>
+		  <div id="loading" class="weui-loadmore">
+		  	<i class="weui-loading"></i>
+		  	<span class="weui-loadmore__tips">正在加载</span>
+		  </div>
+		  <!-- 入库明细 -->
+		  <script type="text/template" id="temp-wh-detail">
+		  	<ul border="0" cellspacing="0" cellpadding="0">
+		  		<li class="weui-flex table-header">
+					<div class="w10">序号</div>
+		  			<div class="weui-flex__item">入库数</div>
+		  			<div class="weui-flex__item">操作人</div>
+		  			<div class="weui-flex__item">操作人工号</div>
+		  			<div class="weui-flex__item">入库时间</div>
+		  		</li>
+		  		<% for(var i in list) { %>
+		  		<% var item = list[i]; %>
+		  		<li class="weui-cell_swiped">
+		  			<div class="weui-cell__bd weui-flex table-item">
+						<div class="w10"><%= parseInt(i) + 1%></div>
+		  				<div class="weui-flex__item"><%= item.MaterialQuantity %><%= item.MaterialUnit %></div>
+		  				<div class="weui-flex__item"><%= item.Oper %></div>
+		  				<div class="weui-flex__item"><%= item.Jobnumber %></div>
+		  				<div class="weui-flex__item"><%= item.ModifiedDTime.replace('T', ' ').slice(0, 19) %></div>
+		  			</div>
+		  		</li>
+		  		<% } %>
+		  	</ul>
+		  </script>
+		  <!-- 申请 -->
+		  <script type="text/template" id="temp-receive-detail">
+		  	<ul border="0" cellspacing="0" cellpadding="0">
+		  		<li class="weui-flex table-header">
+					<div class="w10">序号</div>
+		  			<div class="weui-flex__item">申请数</div>
+		  			<div class="weui-flex__item">类别</div>
+		  			<div class="weui-flex__item">申请人</div>
+		  			<div class="weui-flex__item">申请时间</div>
+		  			<div class="weui-flex__item">状态</div>
+		  		</li>
+		  		<% for(var i in list) { %>
+		  		<% var item = list[i]; %>
+		  		<li class="weui-cell_swiped">
+		  			<div class="weui-cell__bd weui-flex table-item">
+		  						<div class="w10"><%= parseInt(i) + 1%></div>
+		  				<div class="weui-flex__item"><%= item.MaterialQuantity %><%= item.MaterialUnit %></div>
+		  				<div class="weui-flex__item"><%= item.OutType %></div>
+		  				<div class="weui-flex__item"><%= item.ApplyName %><%= item.ApplyJobnumber %></div>
+		  				<div class="weui-flex__item"><%= item.ApplyDTime.replace('T', ' ').slice(5, 19) %></div>
+		  				<div class="weui-flex__item"><%= item.HandleStatus %></div>
+		  			</div>
+		  		</li>
+		  		<% } %>
+		  	</ul>
+		  </script>
+		  <!-- 发放 -->
+		  <script type="text/template" id="temp-issue-detail">
+		  	<ul border="0" cellspacing="0" cellpadding="0">
+		  		<li class="weui-flex table-header">
+		  					<div class="w10">序号</div>
+		  			<div class="weui-flex__item">发放数</div>
+		  			<div class="weui-flex__item">类别</div>
+		  			<div class="weui-flex__item">操作人</div>
+		  			<div class="weui-flex__item">发放时间</div>
+		  		</li>
+		  		<% for(var i in list) { %>
+		  		<% var item = list[i]; %>
+		  		<li class="weui-cell_swiped">
+		  			<div class="weui-cell__bd weui-flex table-item">
+		  						<div class="w10"><%= parseInt(i) + 1%></div>
+		  				<div class="weui-flex__item"><%= item.MaterialQuantity %><%= item.MaterialUnit %></div>
+		  				<div class="weui-flex__item"><%= item.OutType %></div>
+		  				<div class="weui-flex__item"><%= item.Oper %><%= item.Jobnumber %></div>
+		  				<div class="weui-flex__item"><%= item.ModifiedDTime.replace('T', ' ').slice(0, 19) %></div>
+		  			</div>
+		  		</li>
+		  		<% } %>
+		  	</ul>
+		  </script>
+		<script src="../../../js/zepto.min.js"></script>
+		<script src="../../../js/jquery-2.1.1.min.js"></script>
+		<script src="../../../js/jquery-weui.min.js"></script>
+		<script src="../../../js/zepto.touch.js"></script>
+		<script src="../../../js/common.js"></script>
+		<script>
+			$(function () {
+				// 进入页面提示
+				$.toptip('当前为当天明细，可勾选右上角图标查看所有明细', 3000, 'error');
+				
+				// 当前tab类型标记
+				var tabType = 1
+				
+				$('.title').html(getParam('category') + ' -- ' + getParam('name') + ' 明细')
+				// 初始化，默认入库
+				getDetailList(1)
+				
+				// 点击全部checkbox
+				$('#selectAll').change(function () {
+					getDetailList(tabType)
+				})
+				
+				// 点击切换tab
+				$('.weui-tabbar').on('tap', '.weui-tabbar__item', function () {
+					tabType = $(this).attr('data-type')
+					$(this).addClass('tab-active').siblings().removeClass('tab-active')
+					getDetailList($(this).attr('data-type'))					
+				})
+				// 获取库存列表
+				function getDetailList(type) {
+					var api = ''
+					var templateId = ''
+					if (type == 1) { // 入库
+						api = 'QueryReportDetailInListData'
+						templateId = 'temp-wh-detail'
+					} else if (type == 2) { // 申请
+						api = 'QueryReportDetailOutApplyListData'
+						templateId = 'temp-receive-detail'
+					} else if (type == 3) { //出库
+						api = 'QueryReportDetailOutListData'
+						templateId = 'temp-issue-detail'
+					}
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/DiseaseInStore/' + api,
+					  data: {
+						 searchcondition: getParam('id'),
+						 SearchType: $('#selectAll').prop('checked') ? '' : 1,
+						 timestamp: +new Date()
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  beforeSend: () => {
+					    $('#loading').show()
+					  },
+					  success: (response) => {
+						 if (response.result == 1) {
+							 var info = JSON.parse(response.info)
+							 var html = template('#' + templateId, {
+							 	list: info
+							 })
+							 $('.detail-box').html(html).css('margin-top', '0').show()
+						 } else {
+							$('.detail-box').html(response.info || '暂无数据').css({
+								'text-align': 'center',
+								'margin-top': '20px',
+								'color': '#888'
+							})
+						 }
+						 $('#loading').hide()
+					  },
+					  error: (xhr, status) => {
+							$('.detail-box').html('')
+							$('#loading').hide()
+							$.toast("获取数据失败，请稍后重试")
+					  },
+					})
+				}					
+				
+			})
+		</script>
+	</body>
+</html>

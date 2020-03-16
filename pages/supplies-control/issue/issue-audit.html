@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<title>防疫物资服务平台</title>
+		<link rel="stylesheet" href="../../../css/weui.min.css">
+		<link rel="stylesheet" href="../../../css/jquery-weui.min.css">
+		<style>
+			.header {
+				height: 46px;
+				line-height: 46px;
+				background-color: #69c;
+				color: #fff;
+				text-align: center;
+				font-size: 16px;
+			}
+			.content {
+				padding: 6px 16px 0;
+			}
+			.weui-cells {
+				margin-top: 0 !important;
+			}
+			.weui-label {
+				color: #888;
+			}
+			.req {
+				color: red;
+				margin-left: 5px;
+				font-weight: bold;
+			}
+			#check-success, #check-error {
+				display: none;
+			}
+			.weui-cell__ft {
+				text-align: right;
+			}
+			.weui-loading {
+				width: 50px;
+				height: 50px;
+			}
+			#loading {
+				display: none;
+			}
+			.weui-cells_radio .weui-cell__bd {
+				-webkit-box-flex: 0.3 !important;
+				-webkit-flex: 0.3 !important;
+				flex: 0.3 !important;
+			}
+			#MaterialQuantity {
+				width: 70%;
+			}
+			.weui-select {
+				padding-left: 0 !important;
+			}
+			.msg-box {
+				display: none;
+			}
+			.tips-error {
+				margin-top: 20px;
+				display: none;
+			}
+			.weui-btn {
+				width: 40%;
+				display: inline-block;
+			}
+			.weui-btn-area {
+				text-align: center;
+			}
+			.weui-btn_warn {
+				margin-right: 6%;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<div class="title">申请详情</div>
+		</div>
+		<div class="content">
+			<div class="msg-box">
+				  <div class="weui-cell">
+					  <div class="weui-cell__hd">
+						<label class="weui-label">物资类别</label>
+					  </div>
+					<div class="weui-cell__bd">
+						<label id="MaterialCategory"></label>
+					</div>
+				  </div>
+				  <div class="weui-cell">
+					  <div class="weui-cell__hd">
+						<label class="weui-label">物资编号</label>
+					  </div>
+					<div class="weui-cell__bd" id="SerialNumberBox">
+						<label id="MaterialNumber"></label>
+					</div>
+				  </div>
+				<div class="weui-cell">
+				  <div class="weui-cell__hd">
+					<label class="weui-label">物资名称</label>
+				  </div>
+					<div class="weui-cell__bd">
+						<label id="MaterialName"></label>
+					</div>
+				</div>
+				<div class="weui-cell">
+				  <div class="weui-cell__hd">
+					<label class="weui-label">物资数量</label>
+				  </div>
+					<div class="weui-cell__bd">
+						<label id="MaterialQuantity"></label>
+						<lable id="MaterialUnit"></lable>
+					</div>
+				</div>
+				<div class="weui-cell">
+				  <div class="weui-cell__hd">
+					<label class="weui-label">申请时间</label>
+				  </div>
+					<div class="weui-cell__bd">
+						<label id="ApplyDTime"></label>
+					</div>
+				</div>
+				<div class="weui-cell">
+				  <div class="weui-cell__hd">
+					<label class="weui-label">申请事由</label>
+				  </div>
+					<div class="weui-cell__bd">
+						<label id="Remark"></label>
+					</div>
+				</div>
+				<div class="weui-btn-area">
+					  <a class="weui-btn weui-btn_warn" href="javascript:" id="submit-cancel">退回</a>
+					  <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-issue">发放</a>
+				</div>
+			</div>
+			<div class="tips-error">
+				<p style="text-align: center;color:#888;"></p>
+			</div>
+		</div>
+		<div id="loading" class="weui-loadmore">
+			<i class="weui-loading"></i>
+		</div>
+		<script src="../../../js/zepto.min.js"></script>
+		<script src="../../../js/zepto.touch.js"></script>
+		<script src="../../../js/jquery-weui.min.js"></script>
+		<script src="../../../js/common.js"></script>
+		<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
+		<script>
+			$(function () {
+				// 申请时间
+				var userId = ''
+				var MaterialID = ''
+				var tapFlag = true
+				
+				// 获取待办详情
+				getDetailInfo()
+				
+				// 退回
+				$('#submit-cancel').on('tap', function () {
+					$.confirm({
+					  title: '确认退回？',
+					  text: '是否确定退回该物资申请',
+					  onOK: function () {
+						  // 保存信息
+						  if (tapFlag) {
+						  	tapFlag = false
+							UpdateOutSoreData('3')
+						  }
+					  },
+					  onCancel: function () {
+						$.closeModal();
+					  }
+					});
+				})
+				
+				// 发放
+				$('#submit-issue').on('tap', function () {
+					$.confirm({
+					  title: '确认发放？',
+					  text: '是否确定发放该物资申请',
+					  onOK: function () {
+						  if (tapFlag) {
+						  	tapFlag = false
+							UpdateOutSoreData('2')
+						  }
+					  },
+					  onCancel: function () {
+						$.closeModal();
+					  }
+					});
+				})
+				
+				// 钉钉获取工号api
+				if (dd.env.platform === 'notInDingTalk') {
+					$.toast("此平台需使用钉钉客户端进行操作")
+					$('.content').hide()
+				} else {
+					dd.ready(function () {
+						// dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
+						dd.runtime.permission.requestAuthCode({
+							corpId: "dingdbfb8a312e02f0e835c2f4657eb6378f",
+							onSuccess: function (result) {
+								getUserId(result['code'])
+							},
+							onFail: function (err) {
+							}				
+						});
+					});
+				}
+				// 获取工号
+				function getUserId(code) {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetUserJobNumber',
+					  data: {
+						 code: code
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  success: (response) => {
+						  if (response) {
+							  userId = response
+						  }
+					  },
+					  error: (xhr, status) => {
+						  $.toast("获取用户信息失败，请稍后重试")
+					  },
+					})
+				}
+				
+				function getDetailInfo() {
+					var data = {
+						 ID: getParam('id')
+					  }
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/DiseaseInStore/QueryMaterialOutDataByID',
+					  data: data,
+					  type: 'GET',
+					  dataType: 'json',
+					  beforeSend: () => {
+					    $('#loading').show()
+					  },
+					  success: function (response) {
+					    var result = response.result
+					    if (result != 0) {
+							var info = JSON.parse(response.info)[0]
+							MaterialID = info.MaterialID
+							$('.title').html(info.DepartmentName + info.ApplyJobnumber + info.ApplyName + '申请详情')
+							$('#MaterialCategory').html(info.MaterialCategory)
+							$('#MaterialNumber').html(info.MaterialNumber)
+							$('#MaterialName').html(info.MaterialName)
+							$('#MaterialQuantity').html(info.MaterialQuantity)
+							$('#MaterialUnit').html(info.MaterialUnit)
+							$('#ApplyDTime').html(info.ApplyDTime.replace('T', ' ').slice(0, 19))
+							$('#Remark').html(info.Remark)
+							if (info.ModifiedDTime) {
+								$('#ModifiedDTime').html(info.ModifiedDTime)								
+							} else {
+								$('#ModifiedDTime').html('未发放')
+							}
+							$('.msg-box').show()
+							$('.tips-error').hide()
+					    } else {
+					    	$('.msg-box').hide()
+							$('.tips-error p').html(response.info)
+					    	$('.tips-error').show()
+					    }
+					  },
+					  error: function () {
+						  $.toast("获取明细失败，请稍后重试")
+					  },
+					  complete: () => {
+					     $('#loading').hide()
+					  }
+					})
+				}
+				
+				// 提交操作
+				function UpdateOutSoreData(status) {
+					if (!userId) {
+						$.toast('工号获取异常，请稍后重试')
+						return;
+					}
+					var data = {
+						 MaterialNumber: $('#MaterialNumber').html(),
+						 MaterialID: MaterialID,
+						 ID: getParam('id'),
+						 MaterialCategory: $('#MaterialCategory').html(),
+						 MaterialName: $('#MaterialName').html(),
+						 MaterialQuantity: $('#MaterialQuantity').html(),
+						 MaterialUnit: '',
+						 OperID: userId,
+						 ApplyDTime: '',
+						 Remark: $('#Remark').html(),
+						 HandleStatus: status
+					  }
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/DiseaseInStore/UpdateOutSoreData',
+					  data: data,
+					  type: 'POST',
+					  dataType: 'json',
+					  success: function (response) {
+					    var result = response.result
+					    if (result == 1 || result == 2) {
+							// 提交成功
+					    	$.toast(response.info)
+							setTimeout(function () {
+								localStorage.setItem('backFlag', true)
+								history.go(-1)
+							}, 1000)
+						} else {
+					    	$.toast("提交失败，请稍后重试")
+					    }
+					  },
+					  error: function () {
+						  $.toast("提交失败，请稍后重试")
+					  },
+					  complete: () => {
+					    setTimeout(function () {
+							tapFlag = true
+						}, 1000)
+					  }
+					})
+				}
+			})
+		</script>
+	</body>
+</html>

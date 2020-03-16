@@ -33,7 +33,7 @@
 				margin-left: 5px;
 				font-weight: bold;
 			}
-			#check-success, #check-error {
+			#check-success, #check-error, #non-promise {
 				display: none;
 			}
 			.weui-cell__ft {
@@ -47,6 +47,14 @@
 				display: none;
 			}
 			.search-header {
+				display: none;
+			}
+			#non-promise {
+				margin-top: 20px;
+				text-align: center;
+				color: #888;
+			}
+			#selectmaskqty, #maskstatus {
 				display: none;
 			}
 		</style>
@@ -68,6 +76,9 @@
 			  </div>
 			</div>
 			<div class="msg-box">
+				<div id="non-promise">
+					<p>未接受入园承诺，不可入园</p>
+				</div>
 				<div id="check-error">
 				    <div class="weui-cell">
 						<div class="weui-cell__hd">
@@ -79,6 +90,9 @@
 					</div>
 				  </div>
 				<div id="check-success">
+					<div class="weui-btn-area">
+					      <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-but">提交</a>
+					</div>
 					<div class="weui-cell">
 					    <div class="weui-cell__hd">
 					      <label class="weui-label">系统审核结果</label>
@@ -91,6 +105,18 @@
 					  	<div class="weui-cell__hd"><label class="weui-label">测量体温<span class="req">*</span></label></div>
 					  	<div class="weui-cell__bd">
 					  		<input id="animal-heat" class="weui-input" type="number" placeholder="请输入测量体温" required>
+					  	</div>
+					  </div>
+					  <div class="weui-cell">
+					  	<div class="weui-cell__hd"><label class="weui-label">领取口罩<span class="req">*</span></label></div>
+					  	<div class="weui-cell__bd">
+					  		<select class="weui-select" name="select1" id="selectmaskqty">
+								<option value="2" selected>2个</option>
+								<option value="3">3个</option>
+								<option value="4">4个</option>
+								<option value="5">5个</option>
+							</select>
+							<label id="maskstatus">已领取</label>
 					  	</div>
 					  </div>
 					<div class="weui-cell">
@@ -187,9 +213,6 @@
 							<label id="Remark"></label>
 						</div>
 					</div>
-					<div class="weui-btn-area">
-					      <a class="weui-btn weui-btn_primary" href="javascript:" id="submit-but">提交</a>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -202,6 +225,7 @@
 		<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
 		<script>
 			$(function () {
+				var tapFlag = true
 				$('#get-msg-btn').tap(function () {
 					if (!$('#cardIdVal').val()) {
 						$.toptip('请输入工号', 'error');
@@ -216,7 +240,13 @@
 						$.toptip('请输入体温', 'error');
 					} else {
 						// 保存信息
-						SaveEmpEnterInfo()
+						if (tapFlag) {
+							tapFlag = false
+							SaveEmpEnterInfo()
+							setTimeout(function () {
+								tapFlag = true
+							}, 3000)
+						}
 					}
 				})
 				
@@ -238,25 +268,56 @@
 							// 未审核通过
 							$('#check-error').show()
 							$('#check-success').hide()
+							$('#non-promise').hide()
 						} else if (result == 2) {
 							$.toast('已存在入园信息，请勿重复提交')
 						} else {
 							// 审核通过
-							var info = JSON.parse(response.info)[0]
-							$('#EmployeeId').html(info.EmployeeId)
-							$('#ApplyDate').html(info.ApplyDate.slice(0, 10))
-							$('#EmployeeName').html(info.EmployeeName)
-							$('#DeptName').html(info.DeptName)
-							$('#GroupName').html(info.GroupName)
-							$('#ApplyReason').html(info.ApplyReason)
-							$('#SiteOfficeReason').html(info.SiteOfficeReason)
-							$('#OfficeAddress').html(info.OfficeAddress)
-							$('#IsAreaOwner').html(info.IsAreaOwner)
-							$('#ResponsibilityArea').html(info.ResponsibilityArea)
-							$('#ResponsibilityAreaNo').html(info.ResponsibilityAreaNo)
-							$('#Remark').html(info.Remark)
-							$('#check-success').show()
-							$('#check-error').hide()
+							$.modal({
+							  title: "入园承诺",
+							  text: '本人承诺每天向公司提报的防疫监控信息完整、真实、有效，确认目前符合公司入园办公条件，若申报信息存在瞒报、谎报、缓报等情况，愿意接受公司按照法律法规和规章制度进行相应处理。',
+							  buttons: [
+								{
+									text: "拒绝", 
+									className: "default", 
+									onClick: function() {
+										$.closeModal();
+										$('#check-success').hide()
+										$('#check-error').hide()
+										$('#non-promise').show()
+									}
+								},
+							    { 
+									text: "接受", 
+									onClick: function() { 
+										var info = JSON.parse(response.info)[0]
+										// 领取口罩状态
+										if (info.MaskQuantity === 0) {
+											$('#selectmaskqty').show()
+											$('#maskstatus').hide()
+										} else {
+											$('#maskstatus').show()
+											$('#selectmaskqty').hide()
+										}
+										$('#EmployeeId').html(info.EmployeeId)
+										$('#ApplyDate').html(info.ApplyDate.slice(0, 10))
+										$('#EmployeeName').html(info.EmployeeName)
+										$('#DeptName').html(info.DeptName)
+										$('#GroupName').html(info.GroupName)
+										$('#ApplyReason').html(info.ApplyReason)
+										$('#SiteOfficeReason').html(info.SiteOfficeReason)
+										$('#OfficeAddress').html(info.OfficeAddress)
+										$('#IsAreaOwner').html(info.IsAreaOwner)
+										$('#ResponsibilityArea').html(info.ResponsibilityArea)
+										$('#ResponsibilityAreaNo').html(info.ResponsibilityAreaNo)
+										$('#Remark').html(info.Remark)
+										$('#check-success').show()
+										$('#check-error').hide()
+										$('#non-promise').hide()
+									}
+								}
+							  ]
+							});
 						}
 					  },
 					  error: (xhr, status) => {
@@ -274,7 +335,8 @@
 					  data: {
 						 empID: $('#EmployeeId').html(),
 						 type: 1,
-						 temp: $('#animal-heat').val()
+						 temp: $('#animal-heat').val(),
+						 maskqty: $('#selectmaskqty').css('display') === 'none' ?  0 : $('#selectmaskqty').val()
 					  },
 					  type: 'POST',
 					  dataType: 'json',
@@ -317,20 +379,25 @@
 					})
 				}
 				
-				if (dd.env.platform === 'notInDingTalk') {
-					$('.search-header').show()
-				} else {
-					dd.ready(function () {
-					    // dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
-					    dd.runtime.permission.requestAuthCode({
-					        corpId: "dingdbfb8a312e02f0e835c2f4657eb6378f",
-					        onSuccess: function (result) {
-								getUserId(result['code'])
-					        },
-					        onFail: function (err) {
-					        }				
-					    });
-					});
+				try {
+					if (dd.env.platform === 'notInDingTalk') {
+						$('.search-header').show()
+					} else {
+						dd.ready(function () {
+						    // dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
+						    dd.runtime.permission.requestAuthCode({
+						        corpId: "dingdbfb8a312e02f0e835c2f4657eb6378f",
+						        onSuccess: function (result) {
+									getUserId(result['code'])
+						        },
+						        onFail: function (err) {
+						        }				
+						    });
+						});
+					}								
+				} catch (err) {	
+				  // 异常处理
+				  $('.search-header').show()
 				}
 			})
 		</script>

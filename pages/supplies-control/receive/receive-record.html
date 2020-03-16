@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<link rel="stylesheet" href="../../../css/weui.min.css">
+		<link rel="stylesheet" href="../../../css/jquery-weui.min.css">
+		<title>防疫物资服务平台</title>
+		<style>
+			body {
+				margin: 0px;
+				padding: 0px;
+			}
+			.header {
+				height: 46px;
+				line-height: 46px;
+				background-color: #69c;
+				color: #fff;
+				text-align: center;
+			}
+			button {
+				border: none;
+				padding: 0;
+				outline-style: none;
+				color: #fff;
+			}
+			.title {
+				display: inline-block;
+			}
+			.title {
+				font-size: 18px;
+			}
+			.apply {
+				display: none;
+			}
+			p {
+				text-align: center;
+				font-size: 20px;
+				margin: 0;
+				padding: 0;
+			}
+			.weui-loading {
+				width: 50px;
+				height: 50px;
+			}
+			#loading {
+				display: none;
+			}
+			.getMsg {
+				text-align: center;
+			}
+			.getMsg a {
+				font-size: 22px;
+				color: #333;
+				text-decoration: underline;
+			}
+			.tips-error {
+				margin-top: 20px;
+				display: none;
+			}
+			ul{
+				font-size: 14px;
+				color: #5a5a5a; 
+				width: 98%;
+				table-layout: fixed;
+				margin: 0 auto;
+			}
+			ul li {
+				height: 70px;
+				line-height: 30px;
+			}
+			.record-box {
+				display: none;
+			}
+			.weui-cell_swiped {
+				position: relative;
+			}
+			.weui-flex__item {
+				text-align: center;
+			}
+			.w10 {
+				width: 10%;
+			}
+			ul div {
+				text-align: center;
+			}
+			.table-header {
+				font-size: 15px;
+				height: 40px;
+				line-height: 40px;
+				border-bottom: 1px solid #000;
+				color: #5a5a5a;
+				font-weight: bold;
+			}
+			.table-item {
+				height: 68px;
+				border-bottom: 1px solid #999;
+			}
+			.weui-cell_swiped>.weui-cell__ft {
+				top: 6px;
+			}
+			.weui-swiped-btn_warn {
+				background-color: #15c377;
+				height: 20px;
+				line-height: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="header">
+			<span class="title"></span>
+		</div>
+		<div class="content">
+			<div class="weui-btn-area" style="margin-top: 10px;">
+				  <a class="weui-btn weui-btn_primary apply" style="background-color: rgba(80, 121, 155, 0.7);" href="javascript:" id="submit-but">新增申请</a>
+			</div>
+			<div class="record-box">
+			</div>
+			<div class="tips-error">
+				<p style="text-align: center;color:#888;"></p>
+			</div>
+		</div>
+		<div id="loading" class="weui-loadmore">
+			<i class="weui-loading"></i>
+			<span class="weui-loadmore__tips">正在加载</span>
+		</div>
+		<script type="text/template" id="temp-report">
+			<ul border="0" cellspacing="0" cellpadding="0">
+				<li class="weui-flex table-header">
+					<div class="w10">序号</div>
+					<div class="weui-flex__item">物资</div>
+					<div class="weui-flex__item">申请时间</div>
+					<div class="w10">数量</div>
+					<div class="weui-flex__item">发放时间</div>
+				</li>
+				<% if (list.length) { %>
+					<% for(var i in list) { %>
+					<% var item = list[i]; %>
+					<li class="weui-cell_swiped">
+						<div class="weui-cell__bd weui-flex table-item">
+							<div class="w10"><%= parseInt(i) + 1 %></div>
+							<div class="weui-flex__item"><%= item.MaterialName %></div>
+							<div class="weui-flex__item"><%= item.ApplyDTime.replace('T', ' ').slice(0, 19)%></div>
+							<div class="w10"><%= item.MaterialQuantity%></div>
+							<div class="weui-flex__item">
+								<% if (item.HandleStatus == 1) { %>
+									待发放
+								<% } else if (item.HandleStatus == 2) { %>
+									<%= item.ModifiedDTime.replace('T', ' ').slice(0, 19) %>
+								<% } else if (item.HandleStatus == 3) { %>
+									已退回								
+								<% } %>
+							</div>
+						</div>
+						<div class="weui-cell__ft">
+						  <a class="weui-swiped-btn weui-swiped-btn_warn delete-swipeout getDetail" data-id="<%= item.ID %>" href="javascript:">查看详情</a>
+						</div>
+					</li>
+					<% } %>
+				<% } else { %>
+					<p style="margin-top: 10px;">暂无申请记录</p>
+				<% } %>
+			</ul>
+		</script>
+		<script src="../../../js/zepto.min.js"></script>
+		<script src="../../../js/jquery-2.1.1.min.js"></script>
+		<script src="../../../js/jquery-weui.min.js"></script>
+		<script src="../../../js/zepto.touch.js"></script>
+		<script src="../../../js/common.js"></script>
+		<script src="http://g.alicdn.com/dingding/dingtalk-jsapi/2.7.13/dingtalk.open.js"></script>
+		<script>
+			$(function(){
+				// 监听ios回退事件，刷新页面数据
+				var isPageHide = false
+				window.addEventListener('pageshow', function () {
+					if (isPageHide) {					
+						if (localStorage.getItem('backFlag')) {
+							var isiOS = /iP(ad|hone|od)/.test(navigator.userAgent);
+							localStorage.removeItem('backFlag')
+							if (isiOS) {
+								location.reload()
+							}
+						}
+					}
+				});
+				window.addEventListener('pagehide', function () {
+					isPageHide = true;
+				});
+				
+				var userId = ''
+				
+				$('.apply').on('tap', function () {
+					location.href = 'apply.html?userId=' + userId
+				})
+				
+				$('.record-box').on('tap', '.getDetail', function () {
+					location.href = 'receive-detail.html?id=' + $(this).attr('data-id')
+				})
+				
+				function getRecordList(code) {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/DiseaseInStore/QueryMaterialOutListData',
+					  data: {
+						 EmployeeID: userId
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  beforeSend: () => {
+					    $('#loading').show()
+					  },
+					  success: (response) => {
+						 if (response.result != 0) {
+							 var userName = response.result.split('|')[0]
+							 var deptName = response.result.split('|')[1]
+							 $('.title').html(deptName + userId + userName + '申请记录')
+							 var info = JSON.parse(response.info)
+							 var html = template("#temp-report", {
+								list: info
+							 })
+							 $('.record-box').html(html)
+							 $('.record-box').show()
+							 $('.weui-cell_swiped').swipeout()
+						 } else {
+							$('.tips-error p').html(response.info || '暂无数据')
+							 $('.tips-error').show()
+						 }
+						 $('#loading').hide()
+					  },
+					  error: (xhr, status) => {
+							$('#loading').hide()
+							$.toast("获取数据失败，请稍后重试")
+					  },
+					})
+				}
+				
+				// 获取工号
+				function getUserId(code) {
+					$.ajax({
+					  url: 'http://106.3.225.253:8087/api/EntrancePermit/GetUserJobNumber',
+					  data: {
+						 code: code
+					  },
+					  type: 'GET',
+					  dataType: 'json',
+					  success: (response) => {
+						  if (response) {
+							  userId = response
+							  // 获取到用户名才显示新增申请按钮
+							  $('.apply').show()
+							  // 获取申请列表
+							  getRecordList()
+						  } else {
+							 $.toast("获取用户信息失败，请稍后重试") 
+						  }
+					  },
+					  error: (xhr, status) => {
+						  $.toast("获取用户信息失败，请稍后重试")
+					  },
+					})
+				}
+				
+				if (dd.env.platform === 'notInDingTalk') {
+					$.toast("此平台需使用钉钉客户端进行操作")
+					$('.content').hide()
+				} else {
+					dd.ready(function () {
+						// dd.ready参数为回调函数，在环境准备就绪时触发，jsapi的调用需要保证在该回调函数触发后调用，否则无效。
+						dd.runtime.permission.requestAuthCode({
+							corpId: "dingdbfb8a312e02f0e835c2f4657eb6378f",
+							onSuccess: function (result) {
+								getUserId(result['code'])
+							},
+							onFail: function (err) {
+							}				
+						});
+					});
+				}								
+			})
+		</script>
+	</body>
+</html>
+
